@@ -5,16 +5,15 @@ import { eq } from "drizzle-orm";
 
 export async function GET(
   request: Request,
-  context: any //  <-- simplified, avoids strict type check error
+  { params }: { params: { movieId: string } }
 ) {
   try {
-    const movieId = Number(context.params.movieId);
-
+    const movieId = Number(params.movieId);
     if (isNaN(movieId)) {
       return NextResponse.json({ error: "Invalid movie ID" }, { status: 400 });
     }
 
-    // 🎬 Fetch movie details
+    // Fetch movie details
     const movieResult = await db
       .select()
       .from(movies)
@@ -26,7 +25,7 @@ export async function GET(
       return NextResponse.json({ error: "Movie not found" }, { status: 404 });
     }
 
-    // 👥 Fetch linked artists (actors, composers, lyricists)
+    // Fetch linked artists
     const artistLinks = await db
       .select({
         artist_id: artists.artist_id,
@@ -37,19 +36,15 @@ export async function GET(
       .leftJoin(artists, eq(artists.artist_id, movieArtistLinks.artist_id))
       .where(eq(movieArtistLinks.movie_id, movieId));
 
+    // Group by role
     const actors = artistLinks.filter((a) => a.role === "actor");
     const composers = artistLinks.filter((a) => a.role === "composer");
     const lyricists = artistLinks.filter((a) => a.role === "lyricist");
 
+    // Placeholder songs list
     const songs: any[] = [];
 
-    return NextResponse.json({
-      ...movie,
-      actors,
-      composers,
-      lyricists,
-      songs,
-    });
+    return NextResponse.json({ ...movie, actors, composers, lyricists, songs });
   } catch (err) {
     console.error("❌ Error fetching movie details:", err);
     return NextResponse.json(

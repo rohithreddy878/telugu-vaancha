@@ -1,20 +1,35 @@
 import React from "react";
 
-export default async function MovieDetailsPage({
-  params,
-}: {
+interface Artist {
+  artist_id: number;
+  artist_name: string;
+}
+
+interface Movie {
+  movie_id: number;
+  movie_name: string;
+  movie_name_telugu: string;
+  year: string;
+  actors: Artist[];
+  composers: Artist[];
+  lyricists: Artist[];
+  songs: { song_name: string }[];
+}
+
+interface PageProps {
   params: { movieId: string };
-}) {
+}
+
+export default async function MovieDetailsPage({ params }: PageProps) {
   const { movieId } = params;
 
-  // ✅ Build correct base URL
+  // Build absolute URL (works locally & on Vercel)
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
 
-  // ✅ Use absolute URL (server-side)
   const res = await fetch(`${baseUrl}/api/movies/${movieId}`, {
     cache: "no-store",
   });
@@ -23,7 +38,7 @@ export default async function MovieDetailsPage({
     throw new Error("Failed to fetch movie details");
   }
 
-  const movie = await res.json();
+  const movie: Movie = await res.json();
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -31,12 +46,12 @@ export default async function MovieDetailsPage({
       <p className="text-gray-600 text-lg mb-2">{movie.movie_name_telugu}</p>
       <p className="text-sm text-gray-500 mb-6">Year: {movie.year}</p>
 
-      {/* 🎭 Actors */}
+      {/* Actors */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-3">Actors</h2>
-        {movie.actors?.length ? (
+        {movie.actors.length ? (
           <ul className="list-disc list-inside">
-            {movie.actors.map((actor: any) => (
+            {movie.actors.map((actor) => (
               <li key={actor.artist_id}>{actor.artist_name}</li>
             ))}
           </ul>
@@ -45,12 +60,12 @@ export default async function MovieDetailsPage({
         )}
       </section>
 
-      {/* 🎼 Composers */}
+      {/* Composers */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-3">Composers</h2>
-        {movie.composers?.length ? (
+        {movie.composers.length ? (
           <ul className="list-disc list-inside">
-            {movie.composers.map((composer: any) => (
+            {movie.composers.map((composer) => (
               <li key={composer.artist_id}>{composer.artist_name}</li>
             ))}
           </ul>
@@ -59,12 +74,12 @@ export default async function MovieDetailsPage({
         )}
       </section>
 
-      {/* 🎵 Songs */}
+      {/* Songs */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-3">Songs</h2>
-        {movie.songs?.length ? (
+        {movie.songs.length ? (
           <ul className="list-disc list-inside">
-            {movie.songs.map((song: any, idx: number) => (
+            {movie.songs.map((song, idx) => (
               <li key={idx}>{song.song_name}</li>
             ))}
           </ul>
