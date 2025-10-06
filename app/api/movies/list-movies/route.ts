@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { movies } from "@/lib/schema";
-import { asc, limit } from "drizzle-orm";
+import { asc } from "drizzle-orm";
 
 export async function GET() {
   try {
