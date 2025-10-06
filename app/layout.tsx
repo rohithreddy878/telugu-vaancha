@@ -6,6 +6,9 @@ import Footer from "../components/Footer";
 export const metadata = {
   title: "Telugu Vaancha",
   description: "Telugu lyrics site",
+  other: {
+    "google-site-verification": "ZNLK-m4dbc12qfVhshB8pFkPoeBXaWypYadhIkBR0vw",
+  },
 };
 
 export default function RootLayout({
@@ -15,12 +18,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <meta
-          name="google-site-verification"
-          content="ZNLK-m4dbc12qfVhshB8pFkPoeBXaWypYadhIkBR0vw"
-        />
-      </head>
       <body className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
