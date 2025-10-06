@@ -7,12 +7,12 @@ export default function Home() {
       <p>Starter home page</p>
 
       <div className="mt-6 space-x-4">
-        <Link
+        {/* <Link
           href="/admin"
           className="px-4 py-2 bg-blue-600 text-white rounded"
         >
           Admin
-        </Link>
+        </Link> */}
         <Link href="/artists" className="px-4 py-2 border rounded">
           Artists
         </Link>
