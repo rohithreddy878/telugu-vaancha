@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/* 🔹 Global base layer */
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-800 antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-semibold text-gray-900;
+  }
+
+  h1 { @apply text-2xl mb-4; }
+  h2 { @apply text-xl mb-3; }
+
+  a {
+    @apply text-blue-600 hover:text-blue-800 transition-colors;
+  }
+}
+
+/* 🔹 Component styles (like Navbar, Footer, Buttons) */
+@layer components {
+  main {
+    @apply container mx-auto px-4 py-8;
+  }
+
+  nav {
+    @apply bg-white shadow-sm border-b border-gray-200;
+  }
+
+  footer {
+    @apply bg-white border-t border-gray-200 text-center py-4 text-sm text-gray-600;
+  }
+
+  .btn {
+    @apply inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition;
+  }
+}
