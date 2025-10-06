@@ -1,29 +1,14 @@
 import React from "react";
 
-interface Artist {
-  artist_id: number;
-  artist_name: string;
-}
-
-interface Movie {
-  movie_id: number;
-  movie_name: string;
-  movie_name_telugu: string;
-  year: string;
-  actors: Artist[];
-  composers: Artist[];
-  lyricists: Artist[];
-  songs: { song_name: string }[];
-}
-
-interface PageProps {
+interface MovieDetailsPageProps {
   params: { movieId: string };
 }
 
-export default async function MovieDetailsPage({ params }: PageProps) {
+export default async function MovieDetailsPage({
+  params,
+}: MovieDetailsPageProps) {
   const { movieId } = params;
 
-  // Build absolute URL (works locally & on Vercel)
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.VERCEL_URL
@@ -38,7 +23,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
     throw new Error("Failed to fetch movie details");
   }
 
-  const movie: Movie = await res.json();
+  const movie = await res.json();
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -49,9 +34,9 @@ export default async function MovieDetailsPage({ params }: PageProps) {
       {/* Actors */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-3">Actors</h2>
-        {movie.actors.length ? (
+        {movie.actors?.length ? (
           <ul className="list-disc list-inside">
-            {movie.actors.map((actor) => (
+            {movie.actors.map((actor: any) => (
               <li key={actor.artist_id}>{actor.artist_name}</li>
             ))}
           </ul>
@@ -63,9 +48,9 @@ export default async function MovieDetailsPage({ params }: PageProps) {
       {/* Composers */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-3">Composers</h2>
-        {movie.composers.length ? (
+        {movie.composers?.length ? (
           <ul className="list-disc list-inside">
-            {movie.composers.map((composer) => (
+            {movie.composers.map((composer: any) => (
               <li key={composer.artist_id}>{composer.artist_name}</li>
             ))}
           </ul>
@@ -77,9 +62,9 @@ export default async function MovieDetailsPage({ params }: PageProps) {
       {/* Songs */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-3">Songs</h2>
-        {movie.songs.length ? (
+        {movie.songs?.length ? (
           <ul className="list-disc list-inside">
-            {movie.songs.map((song, idx) => (
+            {movie.songs.map((song: any, idx: number) => (
               <li key={idx}>{song.song_name}</li>
             ))}
           </ul>
