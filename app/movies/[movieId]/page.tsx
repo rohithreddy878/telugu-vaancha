@@ -6,8 +6,10 @@ interface MovieDetailsPageProps {
 
 export default async function MovieDetailsPage({
   params,
-}: MovieDetailsPageProps) {
-  const { movieId } = params;
+}: {
+  params: Promise<{ movieId: string }>;
+}) {
+  const { movieId } = await params;
 
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
