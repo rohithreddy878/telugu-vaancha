@@ -3,12 +3,13 @@ import { db } from "@/lib/db";
 import { movies, movieArtistLinks, artists } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { movieId: string } }
-) {
+// Note: params are accessed via URL parsing
+export async function GET(request: Request) {
   try {
-    const movieId = Number(params.movieId);
+    const url = new URL(request.url);
+    const movieIdParam = url.pathname.split("/").pop(); // get last segment
+    const movieId = Number(movieIdParam);
+
     if (isNaN(movieId)) {
       return NextResponse.json({ error: "Invalid movie ID" }, { status: 400 });
     }
@@ -46,7 +47,7 @@ export async function GET(
 
     return NextResponse.json({ ...movie, actors, composers, lyricists, songs });
   } catch (err) {
-    console.error("❌ Error fetching movie details:", err);
+    console.error("Error fetching movie details:", err);
     return NextResponse.json(
       { error: "Failed to fetch movie details" },
       { status: 500 }
