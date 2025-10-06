@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function MoviesPage() {
   const [movies, setMovies] = useState<any[]>([]);
@@ -64,14 +65,15 @@ export default function MoviesPage() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {movies.map((movie) => (
-            <div
+            <Link
               key={movie.movie_id}
-              className="border p-4 rounded-lg shadow-sm hover:shadow-md transition bg-white"
+              href={`/movies/${movie.movie_id}`}
+              className="block border p-4 rounded-lg shadow-sm hover:shadow-md transition bg-white"
             >
               <h2 className="text-lg font-semibold">{movie.movie_name}</h2>
               <p className="text-gray-600">{movie.movie_name_telugu}</p>
               <p className="text-sm text-gray-500 mt-1">Year: {movie.year}</p>
-            </div>
+            </Link>
           ))}
         </div>
       )}
