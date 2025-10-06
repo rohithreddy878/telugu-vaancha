@@ -59,7 +59,6 @@ export const songs = pgTable(
     song_name: varchar("song_name", { length: 255 }).notNull(),
     song_name_telugu: varchar("song_name_telugu", { length: 255 }).notNull(),
     movie_id: bigint("movie_id", { mode: "number" }).notNull(),
-    release_year: smallint("release_year"),
   },
   (table) => ({
     uniqueSong: unique("unique_song").on(table.song_name, table.movie_id),
