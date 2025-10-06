@@ -9,10 +9,10 @@ const nextConfig = {
   // Fixes workspace root detection for output tracing
   outputFileTracingRoot: __dirname,
 
-  // Allow builds to continue even if ESLint errors exist
+  // Ignore ESLint errors during Vercel builds
   eslint: {
     ignoreDuringBuilds: true,
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
