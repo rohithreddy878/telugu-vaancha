@@ -11,12 +11,12 @@ export default async function MovieDetailsPage({
 }) {
   const { movieId } = await params;
 
-  // Build a fully qualified URL for server-side fetch
-  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-  const host = process.env.VERCEL_URL || "localhost:3000";
-  const baseUrl = `${protocol}://${host}`;
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000");
 
-  // Fetch movie details
   const res = await fetch(`${baseUrl}/api/movies/${movieId}`, {
     cache: "no-store",
   });
