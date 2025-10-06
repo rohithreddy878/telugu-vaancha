@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="prose mx-auto">
-      <h1>Telugu Vaancha</h1>
+      <h1>తెలుగు వాంఛ</h1>
       <p>Starter home page</p>
 
       <div className="mt-6 space-x-4">
