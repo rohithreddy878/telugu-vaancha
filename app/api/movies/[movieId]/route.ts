@@ -5,22 +5,20 @@ import { eq } from "drizzle-orm";
 
 export async function GET(
   request: Request,
-  { params }: { params: { movieId: string } }
+  context: { params: { movieId: string } }
 ) {
   try {
-    const movieId = Number(params.movieId);
-    if (isNaN(movieId)) {
-      return NextResponse.json(
-        { error: "Invalid movie ID" },
-        { status: 400 }
-      );
+    const { movieId } = context.params;
+    const mId = Number(movieId);
+    if (isNaN(mId)) {
+      return NextResponse.json({ error: "Invalid movie ID" }, { status: 400 });
     }
 
     // 🎬 Fetch movie details
     const movieResult = await db
       .select()
       .from(movies)
-      .where(eq(movies.movie_id, movieId))
+      .where(eq(movies.movie_id, mId))
       .limit(1);
 
     const movie = movieResult[0];
@@ -37,7 +35,7 @@ export async function GET(
       })
       .from(movieArtistLinks)
       .leftJoin(artists, eq(artists.artist_id, movieArtistLinks.artist_id))
-      .where(eq(movieArtistLinks.movie_id, movieId));
+      .where(eq(movieArtistLinks.movie_id, mId));
 
     // Group by role
     const actors = artistLinks.filter((a) => a.role === "actor");
@@ -55,7 +53,7 @@ export async function GET(
       songs,
     });
   } catch (err) {
-    console.error("❌ Error fetching movie details:", err);
+    console.error("Error fetching movie details:", err);
     return NextResponse.json(
       { error: "Failed to fetch movie details" },
       { status: 500 }
