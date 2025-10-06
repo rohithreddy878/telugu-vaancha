@@ -6,17 +6,15 @@ interface MovieDetailsPageProps {
 
 export default async function MovieDetailsPage({
   params,
-}: {
-  params: Promise<{ movieId: string }>;
-}) {
-  const { movieId } = await params;
+}: MovieDetailsPageProps) {
+  const { movieId } = params;
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    (process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000");
+  // ✅ Build a fully qualified URL for server-side fetch
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const host = process.env.VERCEL_URL || "localhost:3000";
+  const baseUrl = `${protocol}://${host}`;
 
+  // ✅ Fetch movie details
   const res = await fetch(`${baseUrl}/api/movies/${movieId}`, {
     cache: "no-store",
   });
@@ -33,7 +31,7 @@ export default async function MovieDetailsPage({
       <p className="text-gray-600 text-lg mb-2">{movie.movie_name_telugu}</p>
       <p className="text-sm text-gray-500 mb-6">Year: {movie.year}</p>
 
-      {/* Actors */}
+      {/* 🎭 Actors */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-3">Actors</h2>
         {movie.actors?.length ? (
@@ -47,7 +45,7 @@ export default async function MovieDetailsPage({
         )}
       </section>
 
-      {/* Composers */}
+      {/* 🎼 Composers */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-3">Composers</h2>
         {movie.composers?.length ? (
@@ -61,7 +59,7 @@ export default async function MovieDetailsPage({
         )}
       </section>
 
-      {/* Songs */}
+      {/* 🎵 Songs */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-3">Songs</h2>
         {movie.songs?.length ? (
