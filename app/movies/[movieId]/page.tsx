@@ -6,15 +6,17 @@ interface MovieDetailsPageProps {
 
 export default async function MovieDetailsPage({
   params,
-}: MovieDetailsPageProps) {
-  const { movieId } = params;
+}: {
+  params: Promise<{ movieId: string }>;
+}) {
+  const { movieId } = await params;
 
-  // ✅ Build a fully qualified URL for server-side fetch
+  // Build a fully qualified URL for server-side fetch
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
   const host = process.env.VERCEL_URL || "localhost:3000";
   const baseUrl = `${protocol}://${host}`;
 
-  // ✅ Fetch movie details
+  // Fetch movie details
   const res = await fetch(`${baseUrl}/api/movies/${movieId}`, {
     cache: "no-store",
   });
