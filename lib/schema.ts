@@ -21,6 +21,7 @@ export const movies = pgTable(
     movie_name: varchar("movie_name", { length: 255 }).notNull(),
     movie_name_telugu: varchar("movie_name_telugu", { length: 255 }).notNull(),
     year: smallint("year").notNull(),
+    songs_filled: smallint("songs_filled").default(0).notNull(),
   },
   (table) => ({
     uniqueMovie: unique("unique_movie").on(table.movie_name, table.year),
