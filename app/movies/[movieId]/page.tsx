@@ -30,11 +30,11 @@ export default async function MovieDetailsPage({
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Telugu title only, styled */}
-      <h1 className="text-5xl md:text-6xl font-extrabold text-purple-600 mb-4 text-center drop-shadow-lg">
+      <h1 className="text-5xl md:text-6xl font-extrabold text-purple-600 mb-8 text-center drop-shadow-lg">
         {movie.movie_name_telugu}
       </h1>
 
-      <p className="text-gray-500 text-sm text-center mb-8">{movie.year}</p>
+      <p className="text-gray-500 text-sm text-center mb-4">{movie.year}</p>
 
       {/* Actors */}
       <section className="mb-6">

@@ -39,7 +39,7 @@ export default async function SingerDetailsPage({
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       {/* Telugu Name */}
-      <h1 className="text-5xl md:text-6xl font-extrabold text-center bg-gradient-to-r from-purple-400 via-pink-500 to-orange-500 bg-clip-text text-transparent mb-3 drop-shadow-lg">
+      <h1 className="text-5xl md:text-6xl font-extrabold text-center bg-gradient-to-r from-purple-400 via-pink-500 to-orange-500 bg-clip-text text-transparent mb-3 drop-shadow-lg leading-[2] overflow-visible">
         {artist.artist_name_telugu}
       </h1>
 

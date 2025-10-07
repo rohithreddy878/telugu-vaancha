@@ -27,12 +27,12 @@ export default async function SongDetailsPage({
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* 🎵 Song Name in Telugu */}
-      <h1 className="text-5xl md:text-6xl font-extrabold text-purple-600 mb-4 text-center drop-shadow-lg">
+      <h1 className="text-5xl md:text-6xl font-extrabold text-purple-600 mb-8 text-center drop-shadow-lg">
         {song.song_name_telugu}
       </h1>
 
       {/* Movie Info */}
-      <p className="text-gray-1000 text-lg md:text-xl text-center mb-8">
+      <p className="text-gray-1000 text-lg md:text-xl text-center mb-4">
         {song.movie?.movie_name_telugu}
       </p>
 
