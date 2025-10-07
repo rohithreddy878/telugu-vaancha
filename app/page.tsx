@@ -139,7 +139,7 @@ export default function Home() {
           celebrating the music of Telugu cinema...
         </p>
       </div>
-
+      <div className="h-16"></div>
       {/* Carousels */}
       <section className="mt-20 w-full max-w-6xl space-y-20">
         {/* 🎵 Top Songs */}
