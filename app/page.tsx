@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Great_Vibes } from "next/font/google";
+import { Great_Vibes, Pacifico } from "next/font/google";
 
 interface Artist {
   artist_id: number;
@@ -23,6 +23,11 @@ interface Movie {
 }
 
 const captionFont = Great_Vibes({
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const carouseHeaderFont = Pacifico({
   subsets: ["latin"],
   weight: "400",
 });
@@ -92,8 +97,8 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const sectionHeader =
-    "text-3xl md:text-4xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 drop-shadow text-center";
+  const sectionHeader = `text-2xl md:text-3xl ${carouseHeaderFont.className} 
+      mb-1 inline-flex items-center gap-2 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 drop-shadow leading-[2.5] md:leading-[2.5]`;
 
   const carouselContainer =
     "flex overflow-x-auto snap-x snap-mandatory gap-6 px-4 py-4 justify-start scrollbar-hide scroll-smooth";
@@ -126,6 +131,26 @@ export default function Home() {
     </Link>
   );
 
+  const CarouselPanel = ({
+    emoji,
+    title,
+    children,
+  }: {
+    emoji: string;
+    title: string;
+    children: React.ReactNode;
+  }) => (
+    <div className="bg-white rounded-2xl shadow-md p-6">
+      <div className="mb-4">
+        <h2 className={sectionHeader}>
+          <span>{emoji}</span>
+          {title}
+        </h2>
+      </div>
+      {children}
+    </div>
+  );
+
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-white to-gray-50 pb-24">
       {/* Header */}
@@ -139,12 +164,11 @@ export default function Home() {
           celebrating the music of Telugu cinema...
         </p>
       </div>
-      <div className="h-16"></div>
+      <div className="h-6"></div>
+
       {/* Carousels */}
-      <section className="mt-20 w-full max-w-6xl space-y-20">
-        {/* 🎵 Top Songs */}
-        <div>
-          <h2 className={sectionHeader}>🎵 Top 10 Songs</h2>
+      <section className="mt-20 w-full max-w-6xl space-y-6">
+        <CarouselPanel emoji="🎵" title="Top 10 Songs">
           <div className={carouselContainer}>
             {topSongs.map((s) => (
               <Tile
@@ -155,11 +179,9 @@ export default function Home() {
               />
             ))}
           </div>
-        </div>
+        </CarouselPanel>
 
-        {/* 🎭 Top Actors */}
-        <div>
-          <h2 className={sectionHeader}>🎭 Top 10 Actors</h2>
+        <CarouselPanel emoji="🎭" title="Top 10 Actors">
           <div className={carouselContainer}>
             {topActors.map((a) => (
               <Tile
@@ -170,11 +192,9 @@ export default function Home() {
               />
             ))}
           </div>
-        </div>
+        </CarouselPanel>
 
-        {/* 🎤 Top Singers */}
-        <div>
-          <h2 className={sectionHeader}>🎤 Top 10 Singers</h2>
+        <CarouselPanel emoji="🎤" title="Top 10 Singers">
           <div className={carouselContainer}>
             {topSingers.map((s) => (
               <Tile
@@ -185,11 +205,9 @@ export default function Home() {
               />
             ))}
           </div>
-        </div>
+        </CarouselPanel>
 
-        {/* 🎼 Top Composers */}
-        <div>
-          <h2 className={sectionHeader}>🎼 Top 10 Composers</h2>
+        <CarouselPanel emoji="🎼" title="Top 10 Composers">
           <div className={carouselContainer}>
             {topComposers.map((c) => (
               <Tile
@@ -200,11 +218,9 @@ export default function Home() {
               />
             ))}
           </div>
-        </div>
+        </CarouselPanel>
 
-        {/* 🎬 Top Movies */}
-        <div>
-          <h2 className={sectionHeader}>🎬 Top 10 Movies</h2>
+        <CarouselPanel emoji="🎬" title="Top 10 Movies">
           <div className={carouselContainer}>
             {topMovies.map((m) => (
               <Tile
@@ -215,7 +231,7 @@ export default function Home() {
               />
             ))}
           </div>
-        </div>
+        </CarouselPanel>
       </section>
 
       <style jsx global>{`
