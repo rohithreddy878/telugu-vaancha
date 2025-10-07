@@ -127,7 +127,8 @@ export default function AddSongDialog({
     value: any
   ) => {
     const newLinks = [...form.artistLinks];
-    newLinks[index][key] = value;
+    //newLinks[index][key] = value;
+    (newLinks[index] as any)[key] = value;
     setForm((prev) => ({ ...prev, artistLinks: newLinks }));
   };
 
