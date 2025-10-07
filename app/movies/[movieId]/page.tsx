@@ -1,9 +1,5 @@
 import React from "react";
 
-interface MovieDetailsPageProps {
-  params: { movieId: string };
-}
-
 export default async function MovieDetailsPage({
   params,
 }: {
@@ -17,6 +13,7 @@ export default async function MovieDetailsPage({
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
 
+  // Fetch movie details
   const res = await fetch(`${baseUrl}/api/movies/${movieId}`, {
     cache: "no-store",
   });
@@ -26,6 +23,7 @@ export default async function MovieDetailsPage({
   }
 
   const movie = await res.json();
+  const songs = movie.songs ? movie.songs : [];
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -64,12 +62,28 @@ export default async function MovieDetailsPage({
       {/* 🎵 Songs */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-3">Songs</h2>
-        {movie.songs?.length ? (
-          <ul className="list-disc list-inside">
-            {movie.songs.map((song: any, idx: number) => (
-              <li key={idx}>{song.song_name}</li>
-            ))}
-          </ul>
+        {songs?.length ? (
+          <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+            <thead className="bg-gray-100 text-left">
+              <tr>
+                <th className="p-2 border-b">#</th>
+                <th className="p-2 border-b">Song Name (English)</th>
+                <th className="p-2 border-b">Song Name (Telugu)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {songs.map((song: any, idx: number) => (
+                <tr
+                  key={song.song_id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  <td className="p-2 border-b w-10">{idx + 1}</td>
+                  <td className="p-2 border-b">{song.song_name}</td>
+                  <td className="p-2 border-b">{song.song_name_telugu}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
           <p className="text-gray-500">No songs yet — coming soon!</p>
         )}
