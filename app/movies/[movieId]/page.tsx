@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 export default async function MovieDetailsPage({
   params,
@@ -66,9 +67,10 @@ export default async function MovieDetailsPage({
           <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
             <thead className="bg-gray-100 text-left">
               <tr>
-                <th className="p-2 border-b">#</th>
+                <th className="p-2 border-b w-10">#</th>
                 <th className="p-2 border-b">Song Name (English)</th>
                 <th className="p-2 border-b">Song Name (Telugu)</th>
+                <th className="p-2 border-b text-center w-24">Details</th>
               </tr>
             </thead>
             <tbody>
@@ -77,9 +79,17 @@ export default async function MovieDetailsPage({
                   key={song.song_id}
                   className="hover:bg-gray-50 transition-colors"
                 >
-                  <td className="p-2 border-b w-10">{idx + 1}</td>
+                  <td className="p-2 border-b">{idx + 1}</td>
                   <td className="p-2 border-b">{song.song_name}</td>
                   <td className="p-2 border-b">{song.song_name_telugu}</td>
+                  <td className="p-2 border-b text-center">
+                    <Link
+                      href={`/songs/${song.song_id}`}
+                      className="inline-flex items-center justify-center px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                    >
+                      Details
+                    </Link>
+                  </td>
                 </tr>
               ))}
             </tbody>
