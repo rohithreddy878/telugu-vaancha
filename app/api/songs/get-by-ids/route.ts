@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { songs } from "@/lib/schema";
-import { inArray } from "drizzle-orm";
+import { songs, movies } from "@/lib/schema";
+import { inArray, eq } from "drizzle-orm";
 
 export async function GET(request: Request) {
   try {
@@ -12,7 +12,16 @@ export async function GET(request: Request) {
     const ids = idsParam.split(",").map((id) => Number(id)).filter((id) => !isNaN(id));
     if (ids.length === 0) return NextResponse.json([], { status: 200 });
 
-    const data = await db.select().from(songs).where(inArray(songs.song_id, ids));
+    const data = await db.select({
+                    song_id: songs.song_id,
+                    song_name_telugu: songs.song_name_telugu,
+                    movie_id: songs.movie_id,
+                    movie_name_telugu: movies.movie_name_telugu,
+                  })
+                .from(songs)
+                .leftJoin(movies, eq(songs.movie_id, movies.movie_id))
+                .where(inArray(songs.song_id, ids));
+
     return NextResponse.json(data);
   } catch (err) {
     console.error(err);

@@ -11,8 +11,9 @@ interface Artist {
 }
 interface Song {
   song_id: number;
-  song_name: string;
   song_name_telugu: string;
+  movie_id: number;
+  movie_name_telugu: string;
 }
 interface Movie {
   movie_id: number;
@@ -141,7 +142,7 @@ export default function Home() {
               <Tile
                 key={s.song_id}
                 titleTelugu={s.song_name_telugu}
-                title={s.song_name}
+                title={s.movie_name_telugu}
                 href={`/songs/${s.song_id}`}
               />
             ))}
