@@ -18,28 +18,39 @@ export default function Navbar() {
         </Link>
 
         {/* Navigation Links */}
-        <div className="flex gap-6">
+        <div className="flex gap-4">
           <Link
             href="/"
-            className="text-white font-medium text-sm hover:underline hover:scale-105 transition-transform duration-200"
+            className="px-3 py-1 text-white font-semibold rounded-md 
+                      hover:bg-white hover:bg-opacity-20 hover:text-black 
+                      hover:scale-105 transition-all duration-200"
           >
             Home
           </Link>
+
           <Link
             href="/artists"
-            className="text-white font-medium text-sm hover:underline hover:scale-105 transition-transform duration-200"
+            className="px-3 py-1 text-white font-semibold rounded-md 
+                      hover:bg-white hover:bg-opacity-20 hover:text-black 
+                      hover:scale-105 transition-all duration-200"
           >
             Artists
           </Link>
+
           <Link
             href="/movies"
-            className="text-white font-medium text-sm hover:underline hover:scale-105 transition-transform duration-200"
+            className="px-3 py-1 text-white font-semibold rounded-md 
+                      hover:bg-white hover:bg-opacity-20 hover:text-black 
+                      hover:scale-105 transition-all duration-200"
           >
             Movies
           </Link>
+
           <Link
             href="/admin"
-            className="text-white font-medium text-sm hover:underline hover:scale-105 transition-transform duration-200"
+            className="px-3 py-1 text-white font-semibold rounded-md 
+                      hover:bg-white hover:bg-opacity-20 hover:text-black 
+                      hover:scale-105 transition-all duration-200"
           >
             Admin
           </Link>
