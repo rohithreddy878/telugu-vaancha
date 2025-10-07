@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Great_Vibes } from "next/font/google";
 
 interface Artist {
   artist_id: number;
@@ -20,6 +21,11 @@ interface Movie {
   movie_name: string;
   movie_name_telugu: string;
 }
+
+const captionFont = Great_Vibes({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 export default function Home() {
   const [topActors, setTopActors] = useState<Artist[]>([]);
@@ -123,12 +129,14 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-white to-gray-50 pb-24">
       {/* Header */}
-      <div className="prose mx-auto text-center mt-12">
-        <h1 className="text-6xl md:text-8xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-500 to-orange-500 bg-[length:200%_200%] animate-[gradient-move_6s_linear_infinite] bg-clip-text text-transparent drop-shadow-lg tracking-tight text-center">
+      <div className="relative w-fit mx-auto mt-12 text-center">
+        <h1 className=" text-6xl md:text-8xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-500 to-orange-500 bg-[length:200%_200%] animate-[gradient-move_6s_linear_infinite] bg-clip-text text-transparent drop-shadow-lg tracking-tight text-center">
           తెలుగు వాంఛ
         </h1>
-        <p className="mt-4 text-lg md:text-xl text-gray-600 italic tracking-wide text-center">
-          celebrating the music of Telugu cinema
+        <p
+          className={`${captionFont.className} absolute right-0 bottom-0 translate-y-full mt-4 text-2xl md:text-4xl text-gray-600 tracking-wide text-center`}
+        >
+          celebrating the music of Telugu cinema...
         </p>
       </div>
 
