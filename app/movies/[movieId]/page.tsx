@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 
@@ -8,6 +6,7 @@ export default async function MovieDetailsPage({
 }: {
   params: Promise<{ movieId: string }>;
 }) {
+  // Await params for correct Next.js App Router typing
   const { movieId } = await params;
 
   const baseUrl =
@@ -16,7 +15,7 @@ export default async function MovieDetailsPage({
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
 
-  // Fetch movie details
+  // Server-side fetch; no useEffect needed
   const res = await fetch(`${baseUrl}/api/movies/${movieId}`, {
     cache: "no-store",
   });
@@ -26,78 +25,81 @@ export default async function MovieDetailsPage({
   }
 
   const movie = await res.json();
-  const songs = movie.songs ? movie.songs : [];
+  const songs = movie.songs || [];
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      {/* Telugu Movie Title */}
-      <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-purple-700 text-center drop-shadow-md">
+      {/* Telugu title only, styled */}
+      <h1 className="text-5xl md:text-6xl font-extrabold text-purple-600 mb-4 text-center drop-shadow-lg">
         {movie.movie_name_telugu}
       </h1>
-      <p className="text-sm text-gray-500 text-center mb-6">
-        Year: {movie.year}
-      </p>
 
-      {/* 🎭 Actors */}
+      <p className="text-gray-500 text-sm text-center mb-8">{movie.year}</p>
+
+      {/* Actors */}
       <section className="mb-6">
-        <h2 className="text-md font-medium inline mr-2">Actors:</h2>
-        <span className="text-lg md:text-xl font-bold text-gray-800">
-          {movie.actors && movie.actors.length > 0
+        <h2 className="font-bold text-lg mb-1">Actors:</h2>
+        <p className="ml-2 text-gray-700">
+          {movie.actors?.length
             ? movie.actors.map((a: any) => a.artist_name).join(", ")
             : "No actors listed"}
-        </span>
+        </p>
       </section>
 
-      {/* 🎼 Composers */}
+      {/* Composers */}
       <section className="mb-6">
-        <h2 className="text-md font-medium inline mr-2">Composer(s):</h2>
-        <span className="text-lg md:text-xl font-bold text-gray-800">
-          {movie.composers && movie.composers.length > 0
+        <h2 className="font-bold text-lg mb-1">Composer(s):</h2>
+        <p className="ml-2 text-gray-700">
+          {movie.composers?.length
             ? movie.composers.map((c: any) => c.artist_name).join(", ")
             : "No composers listed"}
-        </span>
+        </p>
       </section>
 
-      {/* 🎵 Songs */}
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-3">Songs</h2>
-        {songs?.length ? (
-          <div className="overflow-x-auto rounded-lg shadow-lg">
-            <table className="min-w-full border border-gray-200 text-left">
-              <thead className="bg-gradient-to-r from-purple-100 via-pink-100 to-orange-100">
-                <tr>
-                  <th className="p-3 border-b w-10">#</th>
-                  <th className="p-3 border-b">Song Name (English)</th>
-                  <th className="p-3 border-b">Song Name (Telugu)</th>
-                  <th className="p-3 border-b text-center w-24">Details</th>
+      {/* Lyricists */}
+      {movie.lyricists?.length ? (
+        <section className="mb-6">
+          <h2 className="font-bold text-lg mb-1">Lyricist(s):</h2>
+          <p className="ml-2 text-gray-700">
+            {movie.lyricists.map((l: any) => l.artist_name).join(", ")}
+          </p>
+        </section>
+      ) : null}
+
+      {/* Songs */}
+      <section className="mb-6">
+        <h2 className="font-bold text-lg mb-3">Songs</h2>
+        {songs.length ? (
+          <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+            <thead className="bg-gray-100 text-left">
+              <tr>
+                <th className="p-2 border-b w-10">#</th>
+                <th className="p-2 border-b">Song Name (Telugu)</th>
+                <th className="p-2 border-b">Song Name (English)</th>
+                <th className="p-2 border-b text-center w-24">Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {songs.map((song: any, idx: number) => (
+                <tr
+                  key={song.song_id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  <td className="p-2 border-b">{idx + 1}</td>
+                  <td className="p-2 border-b">{song.song_name_telugu}</td>
+                  <td className="p-2 border-b">{song.song_name}</td>
+                  <td className="p-2 border-b text-center">
+                    <Link
+                      href={`/songs/${song.song_id}`}
+                      className="inline-flex items-center justify-center px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                    >
+                      Details
+                    </Link>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {songs.map((song: any, idx: number) => (
-                  <tr
-                    key={song.song_id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="p-3 border-b">{idx + 1}</td>
-                    <td className="p-3 border-b font-medium text-gray-800">
-                      {song.song_name}
-                    </td>
-                    <td className="p-3 border-b text-gray-600">
-                      {song.song_name_telugu}
-                    </td>
-                    <td className="p-3 border-b text-center">
-                      <Link
-                        href={`/songs/${song.song_id}`}
-                        className="inline-flex items-center justify-center px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                      >
-                        Details
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         ) : (
           <p className="text-gray-500">No songs yet — coming soon!</p>
         )}

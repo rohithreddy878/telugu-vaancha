@@ -1,8 +1,5 @@
 import React from "react";
-
-interface SongDetailsPageProps {
-  params: { songId: string };
-}
+import Link from "next/link";
 
 export default async function SongDetailsPage({
   params,
@@ -29,88 +26,61 @@ export default async function SongDetailsPage({
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      {/* 🎵 Song Name */}
-      <h1 className="text-3xl font-bold mb-1">{song.song_name_telugu}</h1>
-      <p className="text-lg text-gray-700 mb-4 italic">{song.song_name}</p>
+      {/* 🎵 Song Name in Telugu */}
+      <h1 className="text-5xl md:text-6xl font-extrabold text-purple-600 mb-4 text-center drop-shadow-lg">
+        {song.song_name_telugu}
+      </h1>
 
-      {/* 🎬 Movie Info */}
-      <p className="text-sm text-gray-500 mb-6">
-        Movie:{" "}
-        <span className="font-medium text-gray-800">
-          {song.movie?.movie_name} ({song.movie?.movie_name_telugu})
-        </span>
+      {/* Movie Info */}
+      <p className="text-gray-1000 text-lg md:text-xl text-center mb-8">
+        {song.movie?.movie_name_telugu}
       </p>
 
       {/* 🎭 Actors */}
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Actors</h2>
-        {song.actors?.length ? (
-          <ul className="list-disc list-inside">
-            {song.actors.map((actor: any) => (
-              <li key={actor.artist_id}>
-                {actor.artist_name_telugu}{" "}
-                {actor.artist_name ? `(${actor.artist_name})` : ""}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No actors listed.</p>
-        )}
+      <section className="mb-6">
+        <h2 className="text-lg font-medium text-gray-500 inline-block mr-2">
+          Actors:
+        </h2>
+        <span className="text-gray-800 font-semibold">
+          {song.actors?.map((a: any) => a.artist_name_telugu).join(", ") || "—"}
+        </span>
       </section>
 
       {/* 🎼 Composers */}
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Composers</h2>
-        {song.composers?.length ? (
-          <ul className="list-disc list-inside">
-            {song.composers.map((composer: any) => (
-              <li key={composer.artist_id}>
-                {composer.artist_name_telugu}{" "}
-                {composer.artist_name ? `(${composer.artist_name})` : ""}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No composers listed.</p>
-        )}
+      <section className="mb-6">
+        <h2 className="text-lg font-medium text-gray-500 inline-block mr-2">
+          Composer(s):
+        </h2>
+        <span className="text-gray-800 font-semibold">
+          {song.composers?.map((c: any) => c.artist_name_telugu).join(", ") ||
+            "—"}
+        </span>
       </section>
 
       {/* ✍️ Lyricists */}
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Lyricists</h2>
-        {song.lyricists?.length ? (
-          <ul className="list-disc list-inside">
-            {song.lyricists.map((lyricist: any) => (
-              <li key={lyricist.artist_id}>
-                {lyricist.artist_name_telugu}{" "}
-                {lyricist.artist_name ? `(${lyricist.artist_name})` : ""}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No lyricists listed.</p>
-        )}
+      <section className="mb-6">
+        <h2 className="text-lg font-medium text-gray-500 inline-block mr-2">
+          Lyricist(s):
+        </h2>
+        <span className="text-gray-800 font-semibold">
+          {song.lyricists?.map((l: any) => l.artist_name_telugu).join(", ") ||
+            "—"}
+        </span>
       </section>
 
       {/* 🎤 Singers */}
       <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Singers</h2>
-        {song.singers?.length ? (
-          <ul className="list-disc list-inside">
-            {song.singers.map((singer: any) => (
-              <li key={singer.artist_id}>
-                {singer.artist_name_telugu}{" "}
-                {singer.artist_name ? `(${singer.artist_name})` : ""}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No singers listed.</p>
-        )}
+        <h2 className="text-lg font-medium text-gray-500 inline-block mr-2">
+          Singer(s):
+        </h2>
+        <span className="text-gray-800 font-semibold">
+          {song.singers?.map((s: any) => s.artist_name_telugu).join(", ") ||
+            "—"}
+        </span>
       </section>
 
       {/* 📝 Lyrics */}
-      <section className="mt-10">
+      <section>
         <h2 className="text-2xl font-bold mb-4">Lyrics</h2>
 
         {song.lyrics ? (

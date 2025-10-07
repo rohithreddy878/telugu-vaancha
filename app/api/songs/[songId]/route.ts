@@ -9,12 +9,11 @@ import {
 } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { songId: string } }
-) {
+export async function GET(request: Request) {
   try {
-    const songId = Number(params.songId);
+    const url = new URL(request.url);
+    const songIdParam = url.pathname.split("/").pop(); // get last segment
+    const songId = Number(songIdParam);
     if (isNaN(songId)) {
       return NextResponse.json({ error: "Invalid song ID" }, { status: 400 });
     }
