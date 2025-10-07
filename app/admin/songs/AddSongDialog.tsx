@@ -53,7 +53,7 @@ export default function AddSongDialog({
 
         setMovies(
           (Array.isArray(movieData) ? movieData : movieData.data || []).map(
-            (m) => ({
+            (m: { movie_id: any; movie_name: any }) => ({
               movie_id: m.movie_id,
               movie_name: m.movie_name,
             })
@@ -62,7 +62,7 @@ export default function AddSongDialog({
 
         setArtists(
           (Array.isArray(artistData) ? artistData : artistData.data || []).map(
-            (a) => ({
+            (a: { artist_id: any; artist_name: any }) => ({
               artist_id: a.artist_id,
               artist_name: a.artist_name,
             })
