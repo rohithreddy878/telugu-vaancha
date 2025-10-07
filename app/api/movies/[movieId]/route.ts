@@ -3,10 +3,7 @@ import { db } from "@/lib/db";
 import { movies, movieArtistLinks, artists, songs } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { movieId: string } }
-) {
+export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
     const movieIdParam = url.pathname.split("/").pop(); // get last segment
