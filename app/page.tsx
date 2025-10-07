@@ -35,12 +35,14 @@ const carouseHeaderFont = Pacifico({
 export default function Home() {
   const [topActors, setTopActors] = useState<Artist[]>([]);
   const [topSingers, setTopSingers] = useState<Artist[]>([]);
+  const [topLyricists, setTopLyricists] = useState<Artist[]>([]);
   const [topComposers, setTopComposers] = useState<Artist[]>([]);
   const [topSongs, setTopSongs] = useState<Song[]>([]);
   const [topMovies, setTopMovies] = useState<Movie[]>([]);
 
   const topActorIds = [11, 13, 1, 16, 12, 14, 2, 3, 4, 7];
   const topSingerIds = [142, 128, 119, 106, 101, 129, 94, 141, 137, 105];
+  const topLyricistIds = [87, 88, 109, 110, 145, 153, 132, 117, 91, 89];
   const topComposerIds = [60, 57, 59, 56, 63, 78, 68, 61, 58, 62];
   const topSongIds = [6, 12, 18, 19, 20, 25, 31, 36, 38, 7];
   const topMovieIds = [12, 6, 5, 1, 2, 3, 4, 19, 22, 35];
@@ -54,38 +56,51 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [actorsRes, singersRes, composersRes, songsRes, moviesRes] =
-          await Promise.all([
-            fetch(
-              `${baseUrl}/api/artists/get-by-ids?ids=${topActorIds.join(",")}`
-            ),
-            fetch(
-              `${baseUrl}/api/artists/get-by-ids?ids=${topSingerIds.join(",")}`
-            ),
-            fetch(
-              `${baseUrl}/api/artists/get-by-ids?ids=${topComposerIds.join(
-                ","
-              )}`
-            ),
-            fetch(
-              `${baseUrl}/api/songs/get-by-ids?ids=${topSongIds.join(",")}`
-            ),
-            fetch(
-              `${baseUrl}/api/movies/get-by-ids?ids=${topMovieIds.join(",")}`
-            ),
-          ]);
+        const [
+          actorsRes,
+          singersRes,
+          lyricistsRes,
+          composersRes,
+          songsRes,
+          moviesRes,
+        ] = await Promise.all([
+          fetch(
+            `${baseUrl}/api/artists/get-by-ids?ids=${topActorIds.join(",")}`
+          ),
+          fetch(
+            `${baseUrl}/api/artists/get-by-ids?ids=${topSingerIds.join(",")}`
+          ),
+          fetch(
+            `${baseUrl}/api/artists/get-by-ids?ids=${topLyricistIds.join(",")}`
+          ),
+          fetch(
+            `${baseUrl}/api/artists/get-by-ids?ids=${topComposerIds.join(",")}`
+          ),
+          fetch(`${baseUrl}/api/songs/get-by-ids?ids=${topSongIds.join(",")}`),
+          fetch(
+            `${baseUrl}/api/movies/get-by-ids?ids=${topMovieIds.join(",")}`
+          ),
+        ]);
 
-        const [actorsData, singersData, composersData, songsData, moviesData] =
-          await Promise.all([
-            actorsRes.json(),
-            singersRes.json(),
-            composersRes.json(),
-            songsRes.json(),
-            moviesRes.json(),
-          ]);
+        const [
+          actorsData,
+          singersData,
+          lyricistsData,
+          composersData,
+          songsData,
+          moviesData,
+        ] = await Promise.all([
+          actorsRes.json(),
+          singersRes.json(),
+          lyricistsRes.json(),
+          composersRes.json(),
+          songsRes.json(),
+          moviesRes.json(),
+        ]);
 
         setTopActors(actorsData);
         setTopSingers(singersData);
+        setTopLyricists(lyricistsData);
         setTopComposers(composersData);
         setTopSongs(songsData);
         setTopMovies(moviesData);
@@ -202,6 +217,19 @@ export default function Home() {
                 titleTelugu={s.artist_name_telugu}
                 title={s.artist_name}
                 href={`/artists/singers/${s.artist_id}`}
+              />
+            ))}
+          </div>
+        </CarouselPanel>
+
+        <CarouselPanel emoji="✍️" title="Top 10 Lyricists">
+          <div className={carouselContainer}>
+            {topLyricists.map((l) => (
+              <Tile
+                key={l.artist_id}
+                titleTelugu={l.artist_name_telugu}
+                title={l.artist_name}
+                href={`/artists/lyricists/${l.artist_id}`}
               />
             ))}
           </div>
