@@ -2,6 +2,8 @@
 
 import AddActorDialog from "./AddActorDialog";
 import AddComposerDialog from "./AddComposerDialog";
+import AddLyricistDialog from "./AddLyricistDialog";
+import AddSingerDialog from "./AddSingerDialog";
 import { useState } from "react";
 
 export default function ArtistsPage() {
@@ -19,13 +21,14 @@ export default function ArtistsPage() {
       <div className="flex gap-4">
         <AddActorDialog onAdd={handleAdd} />
         <AddComposerDialog onAdd={handleAdd} />
+        <AddLyricistDialog onAdd={handleAdd} />
+        <AddSingerDialog onAdd={handleAdd} />
       </div>
 
       {/* Placeholder for list display later */}
       <div className="mt-8">
         <p className="text-gray-600">
-          You can add actors and composers here. We’ll display a paginated list
-          below later.
+          You can add artists here. We’ll display a paginated list below later.
         </p>
       </div>
     </div>

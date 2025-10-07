@@ -1,50 +1,74 @@
+// app/api/songs/add-song/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { songs, movieArtistLinks } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { songs, songArtistLinks } from "@/lib/schema";
+
+interface ArtistLinkInput {
+  artist_id: number | string;
+  role: string;
+}
 
 interface SongRequestBody {
   song_name: string;
   song_name_telugu?: string;
-  movie_id: number;
-  artist_links?: { artist_id: number; role: string }[];
+  movie_id: number | string;
+  artistLinks?: ArtistLinkInput[];
+  artist_links?: ArtistLinkInput[]; // for compatibility
 }
 
 export async function POST(req: Request) {
   try {
     const body: SongRequestBody = await req.json();
 
-    const { song_name, song_name_telugu, movie_id, artist_links } = body;
+    const {
+      song_name,
+      song_name_telugu = "",
+      movie_id,
+      artistLinks = body.artist_links || [],
+    } = body;
 
     if (!song_name || !movie_id) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required fields: song_name or movie_id" },
+        { status: 400 }
+      );
     }
 
-    // Insert the song
+    // 1️⃣ Insert song
     const [newSong] = await db
       .insert(songs)
       .values({
         song_name,
-        song_name_telugu: song_name_telugu || "",
-        movie_id,
+        song_name_telugu,
+        movie_id: Number(movie_id),
       })
       .returning();
 
-    // Insert artist links if provided
-    if (artist_links && artist_links.length > 0) {
-      const linksToInsert = artist_links.map((link) => ({
-        movie_id,
-        artist_id: link.artist_id,
-        role: link.role,
-        song_id: newSong.song_id,
-      }));
+    // 2️⃣ Insert artist links (into song_artist_links)
+    if (Array.isArray(artistLinks) && artistLinks.length > 0) {
+      const validLinks = artistLinks
+        .map((link) => {
+          const artist_id = Number(link.artist_id);
+          const role = link.role?.trim();
 
-      await db.insert(movieArtistLinks).values(linksToInsert);
+          if (!artist_id || !role) return null;
+
+          return {
+            song_id: newSong.song_id,
+            artist_id,
+            role,
+          };
+        })
+        .filter(Boolean) as { song_id: number; artist_id: number; role: string }[];
+
+      if (validLinks.length > 0) {
+        await db.insert(songArtistLinks).values(validLinks);
+      }
     }
 
     return NextResponse.json({ success: true, song: newSong });
   } catch (err) {
-    console.error("Error adding song:", err);
+    console.error("❌ Error adding song:", err);
     return NextResponse.json({ error: "Failed to add song" }, { status: 500 });
   }
 }

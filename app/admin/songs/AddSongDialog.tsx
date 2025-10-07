@@ -2,21 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 
-const ROLE_OPTIONS = ["actor", "composer", "lyricist", "singer"];
-
 interface ArtistLink {
   artist_id: number;
-  artist_name_input?: string;
   role: string;
-  showSuggestions?: boolean;
 }
 
 interface SongForm {
   song_name: string;
   song_name_telugu: string;
   movie_id: number | null;
-  movie_name_input?: string;
-  showMovieSuggestions?: boolean;
   artistLinks: ArtistLink[];
 }
 
@@ -33,8 +27,6 @@ export default function AddSongDialog({
     song_name: "",
     song_name_telugu: "",
     movie_id: null,
-    movie_name_input: "",
-    showMovieSuggestions: false,
     artistLinks: [],
   });
 
@@ -44,61 +36,89 @@ export default function AddSongDialog({
   const [artists, setArtists] = useState<
     { artist_id: number; artist_name: string }[]
   >([]);
+  const [movieQuery, setMovieQuery] = useState("");
+  const [artistQueries, setArtistQueries] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch movies and artists for autocomplete
+  // Fetch all movies and artists
   useEffect(() => {
-    async function fetchMovies() {
+    async function fetchDropdownData() {
       try {
-        const res = await fetch("/api/movies/list-all-movies");
-        if (!res.ok) throw new Error("Failed to fetch movies");
-        const data = await res.json();
-        const movieArray = Array.isArray(data) ? data : data.data || [];
+        const [movieRes, artistRes] = await Promise.all([
+          fetch("/api/movies/list-all-movies"),
+          fetch("/api/artists/list-all-artists"),
+        ]);
+        const movieData = await movieRes.json();
+        const artistData = await artistRes.json();
+
         setMovies(
-          movieArray.map((m) => ({
-            movie_id: m.movie_id,
-            movie_name: m.movie_name,
-          }))
+          (Array.isArray(movieData) ? movieData : movieData.data || []).map(
+            (m) => ({
+              movie_id: m.movie_id,
+              movie_name: m.movie_name,
+            })
+          )
         );
-      } catch (err) {
-        console.error("Error fetching movies:", err);
-      }
-    }
 
-    async function fetchArtists() {
-      try {
-        const res = await fetch("/api/artists/list-all-artists");
-        if (!res.ok) throw new Error("Failed to fetch artists");
-        const data = await res.json();
-        const artistArray = Array.isArray(data) ? data : data.data || [];
         setArtists(
-          artistArray.map((a) => ({
-            artist_id: a.artist_id,
-            artist_name: a.artist_name,
-          }))
+          (Array.isArray(artistData) ? artistData : artistData.data || []).map(
+            (a) => ({
+              artist_id: a.artist_id,
+              artist_name: a.artist_name,
+            })
+          )
         );
       } catch (err) {
-        console.error("Error fetching artists:", err);
+        console.error("Error loading dropdown data:", err);
+      }
+    }
+    fetchDropdownData();
+  }, []);
+
+  // Auto-fetch artists when a movie is selected
+  useEffect(() => {
+    async function fetchMovieArtists() {
+      if (!form.movie_id) return;
+      try {
+        const res = await fetch(`/api/movies/${form.movie_id}`);
+        if (!res.ok) throw new Error("Failed to fetch movie details");
+        const data = await res.json();
+
+        const artistLinks: ArtistLink[] = [];
+
+        if (data.actors?.length) {
+          artistLinks.push(
+            ...data.actors.map((a: any) => ({
+              artist_id: a.artist_id,
+              role: "actor",
+            }))
+          );
+        }
+        if (data.composers?.length) {
+          artistLinks.push(
+            ...data.composers.map((c: any) => ({
+              artist_id: c.artist_id,
+              role: "composer",
+            }))
+          );
+        }
+
+        setForm((prev) => ({ ...prev, artistLinks }));
+        setArtistQueries(Array(artistLinks.length).fill(""));
+      } catch (err) {
+        console.error("Error fetching movie artists:", err);
       }
     }
 
-    fetchMovies();
-    fetchArtists();
-  }, []);
+    fetchMovieArtists();
+  }, [form.movie_id]);
 
   const handleAddArtistLink = () => {
     setForm((prev) => ({
       ...prev,
-      artistLinks: [
-        ...prev.artistLinks,
-        {
-          artist_id: 0,
-          role: "",
-          showSuggestions: false,
-          artist_name_input: "",
-        },
-      ],
+      artistLinks: [...prev.artistLinks, { artist_id: 0, role: "" }],
     }));
+    setArtistQueries((prev) => [...prev, ""]);
   };
 
   const handleArtistChange = (
@@ -109,6 +129,14 @@ export default function AddSongDialog({
     const newLinks = [...form.artistLinks];
     newLinks[index][key] = value;
     setForm((prev) => ({ ...prev, artistLinks: newLinks }));
+  };
+
+  const handleRemoveArtist = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      artistLinks: prev.artistLinks.filter((_, i) => i !== index),
+    }));
+    setArtistQueries((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -135,9 +163,18 @@ export default function AddSongDialog({
     }
   };
 
+  // Filter helpers
+  const filteredMovies = movies.filter((m) =>
+    m.movie_name.toLowerCase().includes(movieQuery.toLowerCase())
+  );
+  const filteredArtists = (query: string) =>
+    artists.filter((a) =>
+      a.artist_name.toLowerCase().includes(query.toLowerCase())
+    );
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-[750px] max-w-full max-h-[90vh] overflow-auto">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-[800px] max-w-full overflow-auto">
         <h2 className="text-xl font-bold mb-4">Add Song</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Song Name */}
@@ -154,6 +191,7 @@ export default function AddSongDialog({
             />
           </div>
 
+          {/* Song Name (Telugu) */}
           <div>
             <label className="block font-medium mb-1">Song Name (Telugu)</label>
             <input
@@ -170,120 +208,122 @@ export default function AddSongDialog({
           </div>
 
           {/* Movie Autocomplete */}
-          <div className="relative">
+          <div>
             <label className="block font-medium mb-1">Movie</label>
             <input
               type="text"
+              placeholder="Type to search movies..."
               className="border p-2 rounded w-full"
-              placeholder="Type movie name..."
-              value={form.movie_name_input}
-              onChange={(e) =>
-                setForm((prev) => ({
-                  ...prev,
-                  movie_name_input: e.target.value,
-                  showMovieSuggestions: true,
-                  movie_id: null,
-                }))
+              value={
+                form.movie_id
+                  ? movies.find((m) => m.movie_id === form.movie_id)
+                      ?.movie_name || ""
+                  : movieQuery
               }
-              required
+              onChange={(e) => {
+                setMovieQuery(e.target.value);
+                setForm((prev) => ({ ...prev, movie_id: null }));
+              }}
             />
-            {form.showMovieSuggestions && form.movie_name_input && (
-              <ul className="absolute z-10 bg-white border w-full max-h-48 overflow-auto mt-1 rounded shadow">
-                {movies
-                  .filter((m) =>
-                    m.movie_name
-                      .toLowerCase()
-                      .includes(form.movie_name_input!.toLowerCase())
-                  )
-                  .map((m) => (
-                    <li
-                      key={m.movie_id}
-                      className="p-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() =>
-                        setForm((prev) => ({
-                          ...prev,
-                          movie_id: m.movie_id,
-                          movie_name_input: m.movie_name,
-                          showMovieSuggestions: false,
-                        }))
-                      }
-                    >
-                      {m.movie_name}
-                    </li>
-                  ))}
-              </ul>
+            {movieQuery && filteredMovies.length > 0 && !form.movie_id && (
+              <div className="border rounded bg-white max-h-40 overflow-y-auto shadow mt-1">
+                {filteredMovies.map((m) => (
+                  <div
+                    key={m.movie_id}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setForm((prev) => ({ ...prev, movie_id: m.movie_id }));
+                      setMovieQuery("");
+                    }}
+                  >
+                    {m.movie_name}
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
           {/* Artist Links */}
           <div>
             <h3 className="font-semibold mb-2">Artists</h3>
-            {form.artistLinks.map((link, idx) => (
-              <div key={idx} className="flex gap-2 mb-2 relative">
-                {/* Artist Autocomplete */}
-                <div className="w-1/2 relative">
-                  <input
-                    type="text"
-                    className="border p-2 rounded w-full"
-                    placeholder="Type artist name..."
-                    value={link.artist_name_input || ""}
-                    onChange={(e) => {
-                      handleArtistChange(
-                        idx,
-                        "artist_name_input",
-                        e.target.value
-                      );
-                      handleArtistChange(idx, "showSuggestions", true);
-                    }}
-                    required
-                  />
-                  {link.showSuggestions && link.artist_name_input && (
-                    <ul className="absolute z-10 bg-white border w-full max-h-48 overflow-auto mt-1 rounded shadow">
-                      {artists
-                        .filter((a) =>
-                          a.artist_name
-                            .toLowerCase()
-                            .includes(link.artist_name_input!.toLowerCase())
-                        )
-                        .map((a) => (
-                          <li
-                            key={a.artist_id}
-                            className="p-2 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => {
-                              handleArtistChange(idx, "artist_id", a.artist_id);
-                              handleArtistChange(
-                                idx,
-                                "artist_name_input",
-                                a.artist_name
-                              );
-                              handleArtistChange(idx, "showSuggestions", false);
-                            }}
-                          >
-                            {a.artist_name}
-                          </li>
-                        ))}
-                    </ul>
-                  )}
-                </div>
+            {form.artistLinks.map((link, idx) => {
+              const query = artistQueries[idx] || "";
+              const selectedArtist = artists.find(
+                (a) => a.artist_id === link.artist_id
+              );
 
-                {/* Role Dropdown */}
-                <select
-                  className="border p-2 rounded w-1/2"
-                  value={link.role}
-                  onChange={(e) =>
-                    handleArtistChange(idx, "role", e.target.value)
-                  }
-                  required
+              return (
+                <div
+                  key={idx}
+                  className="relative flex gap-2 mb-2 items-center"
                 >
-                  <option value="">Select role</option>
-                  {ROLE_OPTIONS.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ))}
+                  <div className="w-1/2">
+                    <input
+                      type="text"
+                      placeholder="Type artist name..."
+                      className="border p-2 rounded w-full"
+                      value={
+                        selectedArtist ? selectedArtist.artist_name : query
+                      }
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const newQueries = [...artistQueries];
+                        newQueries[idx] = val;
+                        setArtistQueries(newQueries);
+                        handleArtistChange(idx, "artist_id", 0);
+                      }}
+                    />
+                    {query &&
+                      filteredArtists(query).length > 0 &&
+                      !selectedArtist && (
+                        <div className="absolute left-0 border rounded bg-white max-h-40 overflow-y-auto shadow mt-1 w-[45%] z-10">
+                          {filteredArtists(query).map((a) => (
+                            <div
+                              key={a.artist_id}
+                              className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => {
+                                handleArtistChange(
+                                  idx,
+                                  "artist_id",
+                                  a.artist_id
+                                );
+                                const newQueries = [...artistQueries];
+                                newQueries[idx] = "";
+                                setArtistQueries(newQueries);
+                              }}
+                            >
+                              {a.artist_name}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                  </div>
+
+                  <select
+                    className="border p-2 rounded w-1/3"
+                    value={link.role}
+                    onChange={(e) =>
+                      handleArtistChange(idx, "role", e.target.value)
+                    }
+                  >
+                    <option value="">Select role</option>
+                    <option value="actor">Actor</option>
+                    <option value="singer">Singer</option>
+                    <option value="lyricist">Lyricist</option>
+                    <option value="composer">Composer</option>
+                  </select>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveArtist(idx)}
+                    className="text-red-500 hover:underline"
+                  >
+                    ✕
+                  </button>
+                </div>
+              );
+            })}
+
             <button
               type="button"
               className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
