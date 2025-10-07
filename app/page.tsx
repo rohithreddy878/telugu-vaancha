@@ -27,11 +27,11 @@ export default function Home() {
   const [topSongs, setTopSongs] = useState<Song[]>([]);
   const [topMovies, setTopMovies] = useState<Movie[]>([]);
 
-  const topActorIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const topSingerIds = [80, 81, 82, 83, 84, 85, 86, 87, 88, 89];
-  const topComposerIds = [60, 61, 62, 63, 64, 65, 66, 67, 68, 69];
-  const topSongIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const topMovieIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const topActorIds = [11, 13, 1, 16, 12, 14, 2, 3, 4, 7];
+  const topSingerIds = [142, 128, 119, 106, 101, 129, 94, 141, 137, 105];
+  const topComposerIds = [60, 57, 59, 56, 63, 78, 68, 61, 58, 62];
+  const topSongIds = [6, 12, 18, 19, 20, 25, 31, 36, 38, 7];
+  const topMovieIds = [12, 6, 5, 1, 2, 3, 4, 19, 22, 35];
 
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
@@ -157,7 +157,7 @@ export default function Home() {
                 key={a.artist_id}
                 titleTelugu={a.artist_name_telugu}
                 title={a.artist_name}
-                href="/"
+                href={`/artists/actors/${a.artist_id}`}
               />
             ))}
           </div>
@@ -172,7 +172,7 @@ export default function Home() {
                 key={s.artist_id}
                 titleTelugu={s.artist_name_telugu}
                 title={s.artist_name}
-                href="/"
+                href={`/artists/singers/${s.artist_id}`}
               />
             ))}
           </div>
@@ -187,7 +187,7 @@ export default function Home() {
                 key={c.artist_id}
                 titleTelugu={c.artist_name_telugu}
                 title={c.artist_name}
-                href="/"
+                href={`/artists/composers/${c.artist_id}`}
               />
             ))}
           </div>

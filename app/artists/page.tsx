@@ -42,8 +42,24 @@ export default function ArtistsPage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setPage(1); // reset to first page when searching
+    setPage(1);
     fetchArtists(search.trim());
+  };
+
+  const getRole = (artist: any) => {
+    if (artist.is_actor) return "Actor";
+    if (artist.is_composer) return "Composer";
+    if (artist.is_lyricist) return "Lyricist";
+    if (artist.is_singer) return "Singer";
+    return "Unknown";
+  };
+
+  const getDetailsLink = (artist: any) => {
+    if (artist.is_actor) return `/artists/actors/${artist.artist_id}`;
+    if (artist.is_composer) return `/artists/composers/${artist.artist_id}`;
+    if (artist.is_lyricist) return `/artists/lyricists/${artist.artist_id}`;
+    if (artist.is_singer) return `/artists/singers/${artist.artist_id}`;
+    return `/artists/${artist.artist_id}`;
   };
 
   return (
@@ -90,6 +106,8 @@ export default function ArtistsPage() {
                   <th className="p-3 border-b">#</th>
                   <th className="p-3 border-b">Artist Name</th>
                   <th className="p-3 border-b">Telugu Name</th>
+                  <th className="p-3 border-b">Role</th>
+                  <th className="p-3 border-b">Details</th>
                 </tr>
               </thead>
               <tbody>
@@ -104,6 +122,17 @@ export default function ArtistsPage() {
                     </td>
                     <td className="p-3 border-b text-gray-600">
                       {artist.artist_name_telugu}
+                    </td>
+                    <td className="p-3 border-b text-gray-700">
+                      {getRole(artist)}
+                    </td>
+                    <td className="p-3 border-b text-center">
+                      <Link
+                        href={getDetailsLink(artist)}
+                        className="bg-purple-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-600 transition"
+                      >
+                        View
+                      </Link>
                     </td>
                   </tr>
                 ))}
