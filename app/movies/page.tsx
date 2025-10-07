@@ -37,21 +37,26 @@ export default function MoviesPage() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Movies</h1>
+    <div className="p-6 max-w-6xl mx-auto">
+      <h1 className="text-4xl md:text-5xl font-extrabold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-orange-500 bg-[length:200%_200%] animate-[gradient-move_6s_linear_infinite] bg-clip-text text-transparent drop-shadow-lg tracking-tight text-center">
+        సినిమాలు
+      </h1>
 
       {/* Search Bar */}
-      <form onSubmit={handleSearch} className="flex gap-2 mb-6">
+      <form
+        onSubmit={handleSearch}
+        className="flex flex-col md:flex-row gap-2 mb-8"
+      >
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search movies..."
-          className="border p-2 rounded w-full"
+          className="border p-3 rounded-lg w-full md:flex-1 focus:ring-2 focus:ring-purple-400 focus:outline-none transition"
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="bg-pink-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-pink-600 transition"
         >
           Search
         </button>
@@ -59,20 +64,22 @@ export default function MoviesPage() {
 
       {/* Movie Grid */}
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-gray-500 text-center mt-6">Loading...</p>
       ) : movies.length === 0 ? (
-        <p>No movies found.</p>
+        <p className="text-gray-500 text-center mt-6">No movies found.</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {movies.map((movie) => (
             <Link
               key={movie.movie_id}
               href={`/movies/${movie.movie_id}`}
-              className="block border p-4 rounded-lg shadow-sm hover:shadow-md transition bg-white"
+              className="block border p-4 rounded-xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 bg-white"
             >
-              <h2 className="text-lg font-semibold">{movie.movie_name}</h2>
-              <p className="text-gray-600">{movie.movie_name_telugu}</p>
-              <p className="text-sm text-gray-500 mt-1">Year: {movie.year}</p>
+              <h2 className="text-lg md:text-xl font-semibold text-gray-800">
+                {movie.movie_name}
+              </h2>
+              <p className="text-gray-600 mt-1">{movie.movie_name_telugu}</p>
+              <p className="text-sm text-gray-500 mt-2">Year: {movie.year}</p>
             </Link>
           ))}
         </div>

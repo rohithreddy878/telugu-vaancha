@@ -13,7 +13,7 @@ export default function Navbar() {
             className="w-8 h-8 animate-bounce-slow"
           />
           <span className="text-2xl font-extrabold tracking-tight text-white drop-shadow-lg">
-            Telugu Vaancha
+            తెలుగు వాంఛ
           </span>
         </Link>
 
