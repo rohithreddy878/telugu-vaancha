@@ -75,8 +75,9 @@ export const lyrics = pgTable(
     lyric_id: serial("lyric_id").primaryKey(),
     song_id: bigint("song_id", { mode: "number" }).notNull(),
     telugu_lyrics: text("telugu_lyrics").notNull(),
-    english_lyrics: text("english_lyrics").notNull(),
-    english_translated_subs: text("english_translated_subs"),
+    english_transliteration_lyrics: text("english_transliteration_lyrics").notNull(),
+    english_translation_lyrics: text("english_translation_lyrics"),
+    song_info: text("song_info"), // new column for trivia/notes/facts
   },
   (table) => ({
     uniqueSongId: unique("unique_lyrics_song_id").on(table.song_id),
