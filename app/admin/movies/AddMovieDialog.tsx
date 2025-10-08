@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function AddMovieDialog({ onAdd }: { onAdd: () => void }) {
   const [open, setOpen] = useState(false);
@@ -10,8 +10,13 @@ export default function AddMovieDialog({ onAdd }: { onAdd: () => void }) {
     year: "",
   });
   const [artists, setArtists] = useState<any[]>([]);
-  const [artistLinks, setArtistLinks] = useState([{ artist_id: "", role: "" }]);
+  const [artistLinks, setArtistLinks] = useState([
+    { artist_id: "", artist_name: "", role: "" },
+  ]);
   const [loading, setLoading] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -22,12 +27,39 @@ export default function AddMovieDialog({ onAdd }: { onAdd: () => void }) {
     }
   }, [open]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleAddArtistRow = () => {
-    setArtistLinks([...artistLinks, { artist_id: "", role: "" }]);
+    setArtistLinks([
+      ...artistLinks,
+      { artist_id: "", artist_name: "", role: "" },
+    ]);
   };
 
   const handleRemoveArtistRow = (index: number) => {
     setArtistLinks(artistLinks.filter((_, i) => i !== index));
+  };
+
+  const handleSelectArtist = (idx: number, artist: any) => {
+    const updated = [...artistLinks];
+    updated[idx] = {
+      ...updated[idx],
+      artist_id: artist.artist_id,
+      artist_name: artist.artist_name,
+    };
+    setArtistLinks(updated);
+    setActiveDropdown(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,7 +77,7 @@ export default function AddMovieDialog({ onAdd }: { onAdd: () => void }) {
     if (res.ok) {
       alert("✅ Movie added successfully!");
       setMovie({ movie_name: "", movie_name_telugu: "", year: "" });
-      setArtistLinks([{ artist_id: "", role: "" }]);
+      setArtistLinks([{ artist_id: "", artist_name: "", role: "" }]);
       setOpen(false);
       onAdd();
     } else {
@@ -106,54 +138,81 @@ export default function AddMovieDialog({ onAdd }: { onAdd: () => void }) {
               {/* Artists & Roles Section */}
               <div>
                 <h3 className="font-semibold mb-3">🎭 Artists & Roles</h3>
-                {artistLinks.map((link, idx) => (
-                  <div
-                    key={idx}
-                    className="flex gap-3 mb-2 items-center border p-2 rounded-lg"
-                  >
-                    <select
-                      className="border p-2 flex-1 rounded"
-                      value={link.artist_id}
-                      onChange={(e) => {
-                        const updated = [...artistLinks];
-                        updated[idx].artist_id = e.target.value;
-                        setArtistLinks(updated);
-                      }}
-                    >
-                      <option value="">Select Artist</option>
-                      {artists.map((a) => (
-                        <option key={a.artist_id} value={a.artist_id}>
-                          {a.artist_name}
-                        </option>
-                      ))}
-                    </select>
+                {artistLinks.map((link, idx) => {
+                  const filteredArtists = artists.filter((a) =>
+                    a.artist_name
+                      .toLowerCase()
+                      .includes(link.artist_name.toLowerCase())
+                  );
 
-                    <select
-                      className="border p-2 flex-1 rounded"
-                      value={link.role}
-                      onChange={(e) => {
-                        const updated = [...artistLinks];
-                        updated[idx].role = e.target.value;
-                        setArtistLinks(updated);
-                      }}
+                  return (
+                    <div
+                      key={idx}
+                      className="flex flex-col md:flex-row gap-3 mb-3 border p-3 rounded-lg relative"
+                      ref={activeDropdown === idx ? dropdownRef : null}
                     >
-                      <option value="">Select Role</option>
-                      <option value="actor">Actor</option>
-                      <option value="composer">Composer</option>
-                      <option value="lyricist">Lyricist</option>
-                    </select>
+                      {/* Artist Autocomplete Input */}
+                      <div className="relative flex-1">
+                        <input
+                          type="text"
+                          placeholder="Search artist..."
+                          value={link.artist_name}
+                          onChange={(e) => {
+                            const updated = [...artistLinks];
+                            updated[idx].artist_name = e.target.value;
+                            updated[idx].artist_id = "";
+                            setArtistLinks(updated);
+                            setActiveDropdown(idx);
+                          }}
+                          onFocus={() => setActiveDropdown(idx)}
+                          className="border p-2 w-full rounded"
+                        />
+                        {/* Dropdown */}
+                        {activeDropdown === idx &&
+                          filteredArtists.length > 0 && (
+                            <ul className="absolute z-10 bg-white border rounded-lg shadow-md mt-1 w-full max-h-40 overflow-y-auto">
+                              {filteredArtists.slice(0, 10).map((a) => (
+                                <li
+                                  key={a.artist_id}
+                                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                  onClick={() => handleSelectArtist(idx, a)}
+                                >
+                                  {a.artist_name}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                      </div>
 
-                    {artistLinks.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveArtistRow(idx)}
-                        className="text-red-600 border border-red-600 px-2 py-1 rounded hover:bg-red-50"
+                      {/* Role Dropdown */}
+                      <select
+                        className="border p-2 flex-1 rounded"
+                        value={link.role}
+                        onChange={(e) => {
+                          const updated = [...artistLinks];
+                          updated[idx].role = e.target.value;
+                          setArtistLinks(updated);
+                        }}
                       >
-                        ✕
-                      </button>
-                    )}
-                  </div>
-                ))}
+                        <option value="">Select Role</option>
+                        <option value="actor">Actor</option>
+                        <option value="composer">Composer</option>
+                        <option value="lyricist">Lyricist</option>
+                      </select>
+
+                      {/* Remove Button */}
+                      {artistLinks.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveArtistRow(idx)}
+                          className="text-red-600 border border-red-600 px-2 py-1 rounded hover:bg-red-50"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
 
                 <button
                   type="button"
