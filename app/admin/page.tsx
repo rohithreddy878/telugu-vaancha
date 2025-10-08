@@ -16,6 +16,9 @@ export default function AdminPage() {
         <Link href="/admin/songs" className="px-3 py-1 border rounded">
           Songs
         </Link>
+        <Link href="/admin/lyrics" className="px-3 py-1 border rounded">
+          Lyrics
+        </Link>
       </div>
     </div>
   );

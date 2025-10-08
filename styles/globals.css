@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "react-quill-new/dist/quill.snow.css";
+
+
 
 /* @import url('https://fonts.googleapis.com/css2?family=Sirivennela&display=swap&subset=telugu'); */
 /* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@100..900&display=swap'); */
