@@ -10,8 +10,8 @@ export default function LyricsPage() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6">Manage Lyrics</h1>
+    <div className="flex flex-col items-center min-h-[calc(100vh-2.5rem)] text-center">
+      <h1 className="text-5xl font-semibold mb-10 mt-10">Manage Lyrics</h1>
 
       <div className="flex gap-4">
         <button

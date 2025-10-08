@@ -1,3 +1,4 @@
+// app/api/lyrics/add-new/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { lyrics } from "@/lib/schema";
@@ -5,7 +6,6 @@ import { lyrics } from "@/lib/schema";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-
     const {
       song_id,
       telugu_lyrics,
@@ -14,27 +14,27 @@ export async function POST(request: Request) {
       song_info,
     } = body;
 
-    if (!song_id || !telugu_lyrics || !english_transliteration_lyrics || !english_translation_lyrics) {
+    if (!song_id || !telugu_lyrics) {
       return NextResponse.json(
-        { message: "Missing required fields" },
+        { error: "song_id and telugu_lyrics are required" },
         { status: 400 }
       );
     }
 
-    // Insert into lyrics table
-    const result = await db.insert(lyrics).values({
+    // Insert new lyrics entry
+    await db.insert(lyrics).values({
       song_id,
       telugu_lyrics,
       english_transliteration_lyrics,
       english_translation_lyrics,
-      song_info: song_info || null,
-    }).returning({ lyric_id: lyrics.lyric_id });
+      song_info, // ✅ newly added field
+    });
 
-    return NextResponse.json({ message: "Lyrics added successfully", id: result[0].lyric_id });
+    return NextResponse.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error("Error adding lyrics:", err);
     return NextResponse.json(
-      { message: "Failed to add lyrics" },
+      { error: "Failed to add lyrics" },
       { status: 500 }
     );
   }

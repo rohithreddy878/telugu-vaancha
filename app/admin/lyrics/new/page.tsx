@@ -1,74 +1,79 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { Combobox } from "@/components/Combobox";
-import "react-quill-new/dist/quill.snow.css";
 
-// Dynamic import to avoid SSR issues
+// ✅ Use react-quill-new and import its CSS
+import "react-quill-new/dist/quill.snow.css";
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
-interface Song {
-  song_id: number;
-  song_name: string;
-}
+export default function AddLyricsPage() {
+  const [songs, setSongs] = useState<{ song_id: number; song_name: string }[]>(
+    []
+  );
+  const [selectedSong, setSelectedSong] = useState<{
+    song_id: number;
+    song_name: string;
+  } | null>(null);
 
-interface SongDetails {
-  song_id: number;
-  song_name_telugu: string;
-  movie_name_telugu: string;
-}
+  const [songDetails, setSongDetails] = useState<{
+    song_name_telugu?: string;
+    movie_name_telugu?: string;
+  } | null>(null);
 
-export default function AddLyricPage() {
-  const router = useRouter();
-
-  // Song selection
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
-  const [songDetails, setSongDetails] = useState<SongDetails | null>(null);
-
-  // Lyrics editors
   const [teluguLyrics, setTeluguLyrics] = useState("");
-  const [transliterationLyrics, setTransliterationLyrics] = useState("");
-  const [translationLyrics, setTranslationLyrics] = useState("");
-
-  // Song info / notes
+  const [romanizedLyrics, setRomanizedLyrics] = useState("");
+  const [englishTranslation, setEnglishTranslation] = useState("");
   const [songInfo, setSongInfo] = useState("");
 
-  // Fetch songs list on mount
+  // Fetch song list (id + name only)
   useEffect(() => {
-    fetch("/api/songs/names")
-      .then((res) => res.json())
-      .then((data) => setSongs(data))
-      .catch((err) => console.error("Failed to fetch songs:", err));
+    async function fetchSongs() {
+      try {
+        const res = await fetch("/api/songs/names");
+        if (!res.ok) throw new Error("Failed to fetch songs");
+        const data = await res.json();
+        setSongs(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchSongs();
   }, []);
 
-  // Fetch selected song details
+  // Fetch details for selected song
   useEffect(() => {
-    if (selectedSong) {
-      fetch(`/api/song/get-by-ids?ids=${selectedSong.song_id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.length > 0) setSongDetails(data[0]);
-        })
-        .catch((err) => console.error("Failed to fetch song details:", err));
-    } else {
+    if (!selectedSong) {
       setSongDetails(null);
+      return;
     }
+    async function fetchSongDetails() {
+      try {
+        const res = await fetch(
+          `/api/songs/get-by-ids?ids=${selectedSong.song_id}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch song details");
+        const data = await res.json();
+        setSongDetails(data[0]);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchSongDetails();
   }, [selectedSong]);
 
   const handleSubmit = async () => {
     if (!selectedSong) {
-      alert("Please select a song first.");
+      alert("Please select a song before submitting.");
       return;
     }
 
     const payload = {
       song_id: selectedSong.song_id,
       telugu_lyrics: teluguLyrics,
-      english_transliteration_lyrics: transliterationLyrics,
-      english_translation_lyrics: translationLyrics,
+      english_transliteration_lyrics: romanizedLyrics,
+      english_translation_lyrics: englishTranslation,
       song_info: songInfo,
     };
 
@@ -79,96 +84,106 @@ export default function AddLyricPage() {
         body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
-        alert("Lyrics added successfully!");
-        router.push("/admin/lyrics");
-      } else {
-        const err = await res.json();
-        alert("Failed to add lyrics: " + err.message);
-      }
+      if (!res.ok) throw new Error("Failed to save lyrics");
+      alert("Lyrics saved successfully!");
+      setSelectedSong(null);
+      setTeluguLyrics("");
+      setRomanizedLyrics("");
+      setEnglishTranslation("");
+      setSongInfo("");
     } catch (err) {
       console.error(err);
-      alert("Error adding lyrics");
+      alert("Error saving lyrics.");
     }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6">Add New Lyric</h1>
+    <div className="p-6 min-h-screen overflow-y-auto">
+      <h1 className="text-3xl font-semibold mb-6">Add New Lyrics</h1>
 
-      {/* Song selection dropdown */}
-      <div className="mb-6">
-        <Combobox
-          options={songs}
-          value={selectedSong}
-          onChange={setSelectedSong}
-          placeholder="Select a song..."
-        />
-      </div>
-
-      {/* Read-only song info */}
-      {songDetails && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p>
-            <span className="font-semibold">Song Name (Telugu): </span>
-            {songDetails.song_name_telugu}
-          </p>
-          <p>
-            <span className="font-semibold">Movie Name (Telugu): </span>
-            {songDetails.movie_name_telugu}
-          </p>
-        </div>
-      )}
-
-      {/* Editors */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="flex flex-col">
-          <label className="mb-2 font-medium">Telugu Lyrics</label>
-          <ReactQuill
-            theme="snow"
-            value={teluguLyrics}
-            onChange={setTeluguLyrics}
-            className="h-96 flex-1"
+      {/* Song Selection + Read-Only Details */}
+      <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Left: Combobox */}
+        <div className="md:w-full">
+          <label className="block font-medium mb-2">Select Song</label>
+          <Combobox
+            options={songs}
+            value={selectedSong}
+            onChange={setSelectedSong}
+            placeholder="Type or select song name..."
           />
         </div>
-        <div className="flex flex-col">
-          <label className="mb-2 font-medium">Romanized Lyrics</label>
+
+        {/* Right: Read-only Song Details */}
+        {songDetails && (
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <p className="mb-2">
+              <span className="font-semibold">🎵 Song: </span>
+              {songDetails.song_name_telugu}
+            </p>
+            <p>
+              <span className="font-semibold">🎬 Movie: </span>
+              {songDetails.movie_name_telugu}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Lyrics Editors */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+        {[
+          {
+            title: "Telugu Lyrics",
+            value: teluguLyrics,
+            setter: setTeluguLyrics,
+          },
+          {
+            title: "Romanized Telugu Lyrics",
+            value: romanizedLyrics,
+            setter: setRomanizedLyrics,
+          },
+          {
+            title: "English Translation",
+            value: englishTranslation,
+            setter: setEnglishTranslation,
+          },
+        ].map((editor) => (
+          <div key={editor.title} className="flex flex-col h-[550px]">
+            <h2 className="font-medium mb-2">{editor.title}</h2>
+            <div className="flex-1">
+              <ReactQuill
+                theme="snow"
+                value={editor.value}
+                onChange={editor.setter}
+                className="h-full"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Song Info / Notes */}
+      <div className="mt-10 mb-20">
+        <h2 className="font-medium mb-2">Song Info / Notes</h2>
+        <div className="h-[250px]">
           <ReactQuill
             theme="snow"
-            value={transliterationLyrics}
-            onChange={setTransliterationLyrics}
-            className="h-96 flex-1"
-          />
-        </div>
-        <div className="flex flex-col">
-          <label className="mb-2 font-medium">English Translation</label>
-          <ReactQuill
-            theme="snow"
-            value={translationLyrics}
-            onChange={setTranslationLyrics}
-            className="h-96 flex-1"
+            value={songInfo}
+            onChange={setSongInfo}
+            className="h-full"
           />
         </div>
       </div>
 
-      {/* Song info / notes */}
-      <div className="mb-6">
-        <label className="mb-2 block font-medium">Song Info / Notes</label>
-        <textarea
-          value={songInfo}
-          onChange={(e) => setSongInfo(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg h-32 resize-y"
-          placeholder="Optional trivia, facts, or notes about the song"
-        />
+      {/* Submit Button */}
+      <div className="mt-10 flex justify-end">
+        <button
+          onClick={handleSubmit}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+        >
+          Save Lyrics
+        </button>
       </div>
-
-      {/* Submit button */}
-      <button
-        onClick={handleSubmit}
-        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-      >
-        Save Lyrics
-      </button>
     </div>
   );
 }
