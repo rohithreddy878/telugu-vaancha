@@ -89,6 +89,7 @@ export default function AddAllSongsOfMovieDialog({
     let cancelled = false;
     async function fetchMovieArtists() {
       try {
+        if (!selectedMovie) return;
         const res = await fetch(`/api/movies/${selectedMovie.movie_id}`);
         if (!res.ok) throw new Error("failed");
         const data = await res.json();
