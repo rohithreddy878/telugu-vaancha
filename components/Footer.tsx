@@ -1,3 +1,5 @@
+import { FaInstagram, FaYoutube, FaGithub } from "react-icons/fa";
+
 export default function Footer() {
   return (
     <footer className="bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 border-t border-pink-300">
@@ -5,32 +7,32 @@ export default function Footer() {
         <span className="font-medium drop-shadow-lg">
           © {new Date().getFullYear()} Telugu Vaancha
         </span>
-        {/* <div className="flex gap-4 mt-2 md:mt-0">
+        <div className="flex space-x-4 mt-4 md:mt-0">
           <a
-            href="/"
-            className="hover:underline hover:scale-105 transition-transform duration-200"
+            href="https://www.instagram.com/telugu_vaancha/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-200 transition-colors"
           >
-            Home
+            <FaInstagram size={24} />
           </a>
           <a
-            href="/artists"
-            className="hover:underline hover:scale-105 transition-transform duration-200"
+            href="https://www.youtube.com/@TeluguVaancha"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-200 transition-colors"
           >
-            Artists
+            <FaYoutube size={24} />
           </a>
           <a
-            href="/movies"
-            className="hover:underline hover:scale-105 transition-transform duration-200"
+            href="https://github.com/rohithreddy878/telugu-vaancha"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-200 transition-colors"
           >
-            Movies
+            <FaGithub size={24} />
           </a>
-          <a
-            href="/admin"
-            className="hover:underline hover:scale-105 transition-transform duration-200"
-          >
-            Admin
-          </a>
-        </div> */}
+        </div>
       </div>
     </footer>
   );
