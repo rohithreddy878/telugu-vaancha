@@ -46,7 +46,7 @@ export default function SongsAdminPage() {
       {showAddAllSongsDialog && (
         <AddAllSongsOfMovieDialog
           onClose={() => setShowAddAllSongsDialog(false)}
-          onSubmitSuccess={() => setShowAddAllSongsDialog(false)}
+          onSaveAllSuccess={() => setShowAddAllSongsDialog(false)}
         />
       )}
     </div>
