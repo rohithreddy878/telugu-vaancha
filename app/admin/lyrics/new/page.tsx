@@ -50,6 +50,7 @@ export default function AddLyricsPage() {
     }
     async function fetchSongDetails() {
       try {
+        if (!selectedSong) return;
         const res = await fetch(
           `/api/songs/get-by-ids?ids=${selectedSong.song_id}`
         );
