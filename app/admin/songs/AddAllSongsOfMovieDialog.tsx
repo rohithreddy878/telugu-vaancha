@@ -39,6 +39,7 @@ export default function AddAllSongsOfMovieDialog({
   const [allArtists, setAllArtists] = useState<Artist[]>([]);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [movieQuery, setMovieQuery] = useState("");
+  const [movieDefaultLinks, setMovieDefaultLinks] = useState<ArtistLink[]>([]);
 
   // songs list
   const [songs, setSongs] = useState<SongForm[]>([]);
@@ -132,6 +133,9 @@ export default function AddAllSongsOfMovieDialog({
         }
 
         if (!cancelled) {
+          // store movie defaults separately
+          setMovieDefaultLinks(defaults.map((d) => ({ ...d })));
+
           // initialize songs with a first entry prefilled with defaults (deep copies)
           setSongs([
             {
@@ -183,11 +187,14 @@ export default function AddAllSongsOfMovieDialog({
       const newSong: SongForm = {
         song_name: "",
         song_name_telugu: "",
-        artistLinks: defaults.length ? defaults : [],
+        artistLinks: movieDefaultLinks.map((al) => ({ ...al })), // always fresh copy
       };
       const next = [...prev, newSong];
       // ensure artistQueries for the new song
-      setArtistQueries((aqPrev) => [...aqPrev, defaults.map(() => "")]);
+      setArtistQueries((aqPrev) => [
+        ...aqPrev,
+        movieDefaultLinks.map(() => ""),
+      ]);
       setOpenIndex(next.length - 1); // open new song
       return next;
     });
@@ -401,7 +408,7 @@ export default function AddAllSongsOfMovieDialog({
         </h2>
 
         {/* Movie selector */}
-        <div className="mb-6 relative">
+        <div className="mb-6 relative w-1/2 text-left">
           <label className="block text-sm font-medium mb-2">Movie</label>
           <input
             type="text"
@@ -494,7 +501,7 @@ export default function AddAllSongsOfMovieDialog({
                           <div className="relative w-1/2">
                             <input
                               type="text"
-                              className="border p-2 rounded w-full"
+                              className="border p-2 rounded w-[90%] mx-0 ml-0"
                               placeholder="Type artist name..."
                               value={
                                 selectedArtist
@@ -511,7 +518,7 @@ export default function AddAllSongsOfMovieDialog({
                             {query &&
                               suggestions.length > 0 &&
                               !selectedArtist && (
-                                <div className="absolute left-0 mt-1 w-full bg-white border rounded shadow max-h-40 overflow-auto z-30">
+                                <div className="absolute left-0 mt-1 w-[90%] ml-5 bg-white border rounded shadow max-h-40 overflow-auto z-30">
                                   {suggestions.map((a) => (
                                     <div
                                       key={a.artist_id}
