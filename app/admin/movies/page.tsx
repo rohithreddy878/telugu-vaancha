@@ -12,10 +12,12 @@ export default function ArtistsPage() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6">Manage Artists</h1>
+    <div className="p-6 max-w-5xl mx-auto text-center">
+      {/* Page Title */}
+      <h1 className="text-4xl font-bold mb-10">Manage Movies</h1>
 
-      <div className="flex gap-4">
+      {/* Buttons */}
+      <div className="flex gap-4 justify-center mb-6">
         <AddMovieDialog onAdd={handleAdd} />
       </div>
 
