@@ -40,6 +40,13 @@ export default function AddMovieDialog({ onAdd }: { onAdd: () => void }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  function normalizeText(str: string) {
+    return str
+      .toLowerCase() // ignore case
+      .replace(/[^\p{L}\p{N}]/gu, "") // remove punctuation AND spaces
+      .trim(); // trim just in case
+  }
+
   const handleAddArtistRow = () => {
     setArtistLinks([
       ...artistLinks,
@@ -140,9 +147,9 @@ export default function AddMovieDialog({ onAdd }: { onAdd: () => void }) {
                 <h3 className="font-semibold mb-3">🎭 Artists & Roles</h3>
                 {artistLinks.map((link, idx) => {
                   const filteredArtists = artists.filter((a) =>
-                    a.artist_name
-                      .toLowerCase()
-                      .includes(link.artist_name.toLowerCase())
+                    normalizeText(a.artist_name).includes(
+                      normalizeText(link.artist_name)
+                    )
                   );
 
                   return (

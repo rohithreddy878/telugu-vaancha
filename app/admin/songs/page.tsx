@@ -2,19 +2,30 @@
 
 import React, { useState } from "react";
 import AddSongDialog from "./AddSongDialog"; // create this component like AddMovieDialog
+import AddAllSongsOfMovieDialog from "./AddAllSongsOfMovieDialog";
 
 export default function SongsAdminPage() {
   const [showDialog, setShowDialog] = useState(false);
+  const [showAddAllSongsDialog, setShowAddAllSongsDialog] = useState(false);
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Songs Admin</h1>
+    <div className="p-6 max-w-5xl mx-auto text-center">
+      {/* Page Title */}
+      <h1 className="text-4xl font-bold mb-10">Manage Songs</h1>
+
+      {/* Buttons */}
+      <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
         <button
           onClick={() => setShowDialog(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200"
         >
           Add Song
+        </button>
+        <button
+          onClick={() => setShowAddAllSongsDialog(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200"
+        >
+          Add Songs - Movie
         </button>
       </div>
 
@@ -27,10 +38,15 @@ export default function SongsAdminPage() {
       {showDialog && (
         <AddSongDialog
           onClose={() => setShowDialog(false)}
-          onAddSuccess={() => {
-            setShowDialog(false);
-            // optionally refresh list here if you implement it later
-          }}
+          onAddSuccess={() => setShowDialog(false)}
+        />
+      )}
+
+      {/* Add All Songs of Movie Dialog */}
+      {showAddAllSongsDialog && (
+        <AddAllSongsOfMovieDialog
+          onClose={() => setShowAddAllSongsDialog(false)}
+          onSubmitSuccess={() => setShowAddAllSongsDialog(false)}
         />
       )}
     </div>
