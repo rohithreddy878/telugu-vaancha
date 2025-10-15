@@ -41,11 +41,11 @@ export default function Home() {
   const [topMovies, setTopMovies] = useState<Movie[]>([]);
 
   const topActorIds = [11, 13, 1, 16, 12, 14, 2, 3, 4, 7];
-  const topSingerIds = [142, 128, 119, 106, 101, 129, 94, 141, 137, 105];
-  const topLyricistIds = [87, 88, 109, 110, 145, 153, 132, 117, 91, 89];
-  const topComposerIds = [60, 57, 59, 56, 63, 78, 68, 61, 58, 62];
+  const topSingerIds = [306, 454, 142, 119, 106, 469, 129, 101, 137, 128];
+  const topLyricistIds = [87, 88, 89, 110, 152, 266, 153, 109, 259, 132];
+  const topComposerIds = [60, 56, 57, 78, 59, 63, 68, 211, 154, 273];
   const topSongIds = [6, 12, 18, 19, 20, 25, 31, 36, 38, 7];
-  const topMovieIds = [12, 6, 5, 1, 2, 3, 4, 19, 22, 35];
+  const topMovieIds = [12, 77, 49, 42, 14, 3, 130, 70, 115, 124];
 
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||

@@ -14,7 +14,7 @@ export default function MoviesPage() {
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
 
-  const topMovieIds = [12, 6, 5, 1, 2, 3, 4, 19, 22, 35];
+  const topMovieIds = [12, 77, 49, 42, 14, 3, 130, 70, 115, 124];
 
   async function fetchMovies(searchQuery = "") {
     setLoading(true);
