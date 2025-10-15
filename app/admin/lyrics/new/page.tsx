@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { Combobox } from "@/components/Combobox";
+import AutoResizeQuill from "@/components/AutoResizeQuill";
 
 // ✅ Use react-quill-new and import its CSS
 import "react-quill-new/dist/quill.snow.css";
@@ -23,8 +24,8 @@ export default function AddLyricsPage() {
   } | null>(null);
 
   const [teluguLyrics, setTeluguLyrics] = useState("");
-  const [romanizedLyrics, setRomanizedLyrics] = useState("");
-  const [englishTranslation, setEnglishTranslation] = useState("");
+  const [transliteratedLyrics, setTransliteratedLyrics] = useState("");
+  const [translatedLyrics, setTranslatedLyrics] = useState("");
   const [songInfo, setSongInfo] = useState("");
 
   // Fetch song list (id + name only)
@@ -73,8 +74,8 @@ export default function AddLyricsPage() {
     const payload = {
       song_id: selectedSong.song_id,
       telugu_lyrics: teluguLyrics,
-      english_transliteration_lyrics: romanizedLyrics,
-      english_translation_lyrics: englishTranslation,
+      english_transliteration_lyrics: transliteratedLyrics,
+      english_translation_lyrics: translatedLyrics,
       song_info: songInfo,
     };
 
@@ -89,8 +90,8 @@ export default function AddLyricsPage() {
       alert("Lyrics saved successfully!");
       setSelectedSong(null);
       setTeluguLyrics("");
-      setRomanizedLyrics("");
-      setEnglishTranslation("");
+      setTransliteratedLyrics("");
+      setTranslatedLyrics("");
       setSongInfo("");
     } catch (err) {
       console.error(err);
@@ -139,40 +140,39 @@ export default function AddLyricsPage() {
             setter: setTeluguLyrics,
           },
           {
-            title: "Romanized Telugu Lyrics",
-            value: romanizedLyrics,
-            setter: setRomanizedLyrics,
+            title: "English Transliteration",
+            value: transliteratedLyrics,
+            setter: setTransliteratedLyrics,
           },
           {
             title: "English Translation",
-            value: englishTranslation,
-            setter: setEnglishTranslation,
+            value: translatedLyrics,
+            setter: setTranslatedLyrics,
           },
         ].map((editor) => (
-          <div key={editor.title} className="flex flex-col h-[550px]">
+          // <div key={editor.title} className="flex flex-col h-[550px]">
+          //   <h2 className="font-medium mb-2">{editor.title}</h2>
+          //   <div className="flex-1">
+          //     <ReactQuill
+          //       theme="snow"
+          //       value={editor.value}
+          //       onChange={editor.setter}
+          //       className="h-full"
+          //     />
+          //   </div>
+          // </div>
+          <div key={editor.title} className="flex flex-col">
             <h2 className="font-medium mb-2">{editor.title}</h2>
-            <div className="flex-1">
-              <ReactQuill
-                theme="snow"
-                value={editor.value}
-                onChange={editor.setter}
-                className="h-full"
-              />
-            </div>
+            <AutoResizeQuill value={editor.value} onChange={editor.setter} />
           </div>
         ))}
       </div>
 
       {/* Song Info / Notes */}
       <div className="mt-10 mb-20">
-        <h2 className="font-medium mb-2">Song Info / Notes</h2>
-        <div className="h-[250px]">
-          <ReactQuill
-            theme="snow"
-            value={songInfo}
-            onChange={setSongInfo}
-            className="h-full"
-          />
+        <div key="Song Info / Notes" className="flex flex-col">
+          <h2 className="font-medium mb-2">Song Info / Notes</h2>
+          <AutoResizeQuill value={songInfo} onChange={setSongInfo} />
         </div>
       </div>
 

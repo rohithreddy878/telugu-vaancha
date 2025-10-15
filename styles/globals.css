@@ -57,3 +57,8 @@
   font-variation-settings:
     "wdth" 100; */
 }
+
+/* editors in lyrics pages */
+.custom-quill .ql-editor {
+  min-height: 200px; /* your desired minimum */
+}
