@@ -25,7 +25,7 @@ export default async function SongDetailsPage({
   const song = await res.json();
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto">
       {/* 🎵 Song Name in Telugu */}
       <h1 className="text-5xl md:text-6xl font-extrabold text-purple-600 mb-8 text-center drop-shadow-lg">
         {song.song_name_telugu}
@@ -85,34 +85,48 @@ export default async function SongDetailsPage({
 
         {song.lyrics ? (
           <>
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2 text-gray-700">
-                Telugu Lyrics
-              </h3>
-              <pre className="whitespace-pre-wrap text-gray-800 leading-relaxed border-l-4 border-gray-300 pl-4">
-                {song.lyrics.telugu_lyrics}
-              </pre>
-            </div>
-
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2 text-gray-700">
-                English Lyrics
-              </h3>
-              <pre className="whitespace-pre-wrap text-gray-800 leading-relaxed border-l-4 border-gray-300 pl-4">
-                {song.lyrics.english_lyrics}
-              </pre>
-            </div>
-
-            {song.lyrics.english_translated_subs && (
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+              {/* Telugu Lyrics */}
               <div>
                 <h3 className="text-lg font-semibold mb-2 text-gray-700">
-                  English Translated Subtitles
+                  Telugu Lyrics
                 </h3>
-                <pre className="whitespace-pre-wrap text-gray-800 leading-relaxed border-l-4 border-gray-300 pl-4">
-                  {song.lyrics.english_translated_subs}
-                </pre>
+                <div
+                  className="prose prose-gray max-w-none leading-relaxed border-l-4 border-gray-300 pl-4"
+                  dangerouslySetInnerHTML={{
+                    __html: song.lyrics.telugu_lyrics,
+                  }}
+                />
               </div>
-            )}
+
+              {/* English Lyrics */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2 text-gray-700">
+                  English Lyrics
+                </h3>
+                <div
+                  className="prose prose-gray max-w-none leading-relaxed border-l-4 border-gray-300 pl-4"
+                  dangerouslySetInnerHTML={{
+                    __html: song.lyrics.english_transliteration_lyrics,
+                  }}
+                />
+              </div>
+
+              {/* English Translated Subtitles */}
+              {song.lyrics.english_translation_lyrics && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 text-gray-700">
+                    English Translated Subtitles
+                  </h3>
+                  <div
+                    className="prose prose-gray max-w-none leading-relaxed border-l-4 border-gray-300 pl-4"
+                    dangerouslySetInnerHTML={{
+                      __html: song.lyrics.english_translation_lyrics,
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <p className="text-gray-500 italic">Lyrics not added yet.</p>
