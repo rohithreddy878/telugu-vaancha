@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 
+import { FaHome, FaUsers, FaFilm, FaTools } from "react-icons/fa";
+
 export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 shadow-lg border-b border-pink-300 backdrop-blur-md">
@@ -21,38 +23,42 @@ export default function Navbar() {
         <div className="flex gap-4">
           <Link
             href="/"
-            className="px-3 py-1 text-white font-semibold rounded-md 
-                      hover:bg-white hover:bg-opacity-20 hover:text-black 
-                      hover:scale-105 transition-all duration-200"
+            className="flex items-center justify-center px-3 py-1 text-white font-semibold rounded-md 
+             hover:bg-white hover:bg-opacity-20 hover:text-black 
+             hover:scale-105 transition-all duration-200 gap-2"
           >
-            Home
+            <FaHome size={20} />
+            <span className="hidden sm:inline">Home</span>
           </Link>
 
           <Link
             href="/artists"
-            className="px-3 py-1 text-white font-semibold rounded-md 
-                      hover:bg-white hover:bg-opacity-20 hover:text-black 
-                      hover:scale-105 transition-all duration-200"
+            className="flex items-center justify-center px-3 py-1 text-white font-semibold rounded-md 
+             hover:bg-white hover:bg-opacity-20 hover:text-black 
+             hover:scale-105 transition-all duration-200 gap-2"
           >
-            Artists
+            <FaUsers size={20} />
+            <span className="hidden sm:inline">Artists</span>
           </Link>
 
           <Link
             href="/movies"
-            className="px-3 py-1 text-white font-semibold rounded-md 
-                      hover:bg-white hover:bg-opacity-20 hover:text-black 
-                      hover:scale-105 transition-all duration-200"
+            className="flex items-center justify-center px-3 py-1 text-white font-semibold rounded-md 
+             hover:bg-white hover:bg-opacity-20 hover:text-black 
+             hover:scale-105 transition-all duration-200 gap-2"
           >
-            Movies
+            <FaFilm size={20} />
+            <span className="hidden sm:inline">Movies</span>
           </Link>
 
           <Link
             href="/admin"
-            className="px-3 py-1 text-white font-semibold rounded-md 
-                      hover:bg-white hover:bg-opacity-20 hover:text-black 
-                      hover:scale-105 transition-all duration-200"
+            className="flex items-center justify-center px-3 py-1 text-white font-semibold rounded-md 
+             hover:bg-white hover:bg-opacity-20 hover:text-black 
+             hover:scale-105 transition-all duration-200 gap-2"
           >
-            Admin
+            <FaTools size={20} />
+            <span className="hidden sm:inline">Admin</span>
           </Link>
         </div>
       </div>
