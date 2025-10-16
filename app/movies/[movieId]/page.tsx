@@ -41,7 +41,7 @@ export default async function MovieDetailsPage({
         <h2 className="font-bold text-lg mb-1">Actors:</h2>
         <p className="ml-2 text-gray-700">
           {movie.actors?.length
-            ? movie.actors.map((a: any) => a.artist_name).join(", ")
+            ? movie.actors.map((a: any) => a.artist_name_telugu).join(", ")
             : "No actors listed"}
         </p>
       </section>
@@ -51,7 +51,7 @@ export default async function MovieDetailsPage({
         <h2 className="font-bold text-lg mb-1">Composer(s):</h2>
         <p className="ml-2 text-gray-700">
           {movie.composers?.length
-            ? movie.composers.map((c: any) => c.artist_name).join(", ")
+            ? movie.composers.map((c: any) => c.artist_name_telugu).join(", ")
             : "No composers listed"}
         </p>
       </section>
@@ -74,8 +74,8 @@ export default async function MovieDetailsPage({
             <thead className="bg-gray-100 text-left">
               <tr>
                 <th className="p-2 border-b w-10">#</th>
-                <th className="p-2 border-b">Song Name (Telugu)</th>
-                <th className="p-2 border-b">Song Name (English)</th>
+                <th className="p-2 border-b">పాట</th>
+                <th className="p-2 border-b">Song</th>
                 <th className="p-2 border-b text-center w-24">Details</th>
               </tr>
             </thead>

@@ -104,8 +104,8 @@ export default function ArtistsPage() {
               <thead className="bg-gradient-to-r from-purple-100 via-pink-100 to-orange-100">
                 <tr>
                   <th className="p-3 border-b">#</th>
+                  <th className="p-3 border-b">పేరు</th>
                   <th className="p-3 border-b">Artist Name</th>
-                  <th className="p-3 border-b">Telugu Name</th>
                   <th className="p-3 border-b">Role</th>
                   <th className="p-3 border-b">Details</th>
                 </tr>
@@ -118,10 +118,10 @@ export default function ArtistsPage() {
                   >
                     <td className="p-3 border-b">{artist.artist_id}</td>
                     <td className="p-3 border-b font-medium text-gray-800">
-                      {artist.artist_name}
+                      {artist.artist_name_telugu}
                     </td>
                     <td className="p-3 border-b text-gray-600">
-                      {artist.artist_name_telugu}
+                      {artist.artist_name}
                     </td>
                     <td className="p-3 border-b text-gray-700">
                       {getRole(artist)}

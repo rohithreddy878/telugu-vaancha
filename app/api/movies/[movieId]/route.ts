@@ -29,6 +29,7 @@ export async function GET(request: Request) {
       .select({
         artist_id: artists.artist_id,
         artist_name: artists.artist_name,
+        artist_name_telugu: artists.artist_name_telugu,
         role: movieArtistLinks.role,
       })
       .from(movieArtistLinks)
